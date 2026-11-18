@@ -59,9 +59,14 @@ export function createWorld(){
   const merchant=makeChar("merchant",11,17,"#b47b42","#70412d");
   this.physics.add.existing(player);player.body.setSize(13,9).setOffset(9,20).setCollideWorldBounds(true);
   this.physics.world.setBounds(0,0,W*32,H*32);
-  this.physics.add.existing([amelie,guard,mage,merchant]);
-  [amelie,guard,mage,merchant].forEach(s=>{s.body.setImmovable(true);s.body.setSize(15,10).setOffset(8,20)});
-  this.physics.add.collider(player,[amelie,guard,mage,merchant]);
+  const npcGroup=this.physics.add.group();
+  [amelie,guard,mage,merchant].forEach(s=>{npcGroup.add(s);s.body.setImmovable(true);s.body.setSize(15,10).setOffset(8,20)});
+  this.physics.add.collider(player,npcGroup);
+  const obstacles=this.physics.add.staticGroup();
+  const block=(x,y,width,height)=>{const o=this.add.rectangle(x,y,width,height,0x000000,0);obstacles.add(o);o.body.setSize(width,height);};
+  [[5,6],[12,4],[5,25],[34,6],[34,25],[15,29]].forEach(([x,y])=>block(x*32+96,y*32+78,174,138));
+  for(let y=3;y<33;y++)block(44.5*32,y*32+16,90,32);
+  this.physics.add.collider(player,obstacles);
   this.cameras.main.setBounds(0,0,W*32,H*32);this.cameras.main.setZoom(1.75);this.cameras.main.startFollow(player,true,.12,.12);
   [[amelie,"Amélie · Guide"],[guard,"Garde royal"],[mage,"Morgane · Mage"],[merchant,"Élise · Marchande"]].forEach(([s,t])=>this.add.text(s.x,s.y-43,t,{fontFamily:"monospace",fontSize:"11px",color:"#fff1c7",backgroundColor:"#172333",padding:{x:4,y:3},stroke:"#4e3528",strokeThickness:2}).setOrigin(.5).setDepth(2000));
   this.add.text(cx,cy-90,"✦ FONTAINE DES FONDATEURS ✦",{fontFamily:"monospace",fontSize:"10px",color:"#fff0c4",stroke:"#3d3024",strokeThickness:3}).setOrigin(.5).setDepth(2000);
