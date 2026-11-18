@@ -172,7 +172,8 @@ export function createWorld(canvas){
  function castleBlock(x,y,z,w,h,d,m=castleMat){return box(world,w,h,d,m,x,y,z)}
  function tower(x,z){
   castleBlock(x,0,z,3.1,8.2,3.1,castleMat);
-  castleBlock(x,7.8,z,3.55,.55,3.55,castleLight);\n  castleBlock(x,3.9,z,3.18,.16,3.18,castleLight);
+  castleBlock(x,7.8,z,3.55,.55,3.55,castleLight);
+  castleBlock(x,3.9,z,3.18,.16,3.18,castleLight);
   for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){
    castleBlock(x+a*1.15,8.35,z+b*1.15,.55,.7,.55,castleLight);
   }
@@ -363,7 +364,8 @@ export function createWorld(canvas){
  const clock=new THREE.Clock();
  function animate(){
   const t=clock.getElapsedTime();
-  waterJet.scale.y=.9+Math.sin(t*2.4)*.12;\n  waterStreams.forEach((p,i)=>{p.scale.y=.8+Math.sin(t*3+i)*.22;p.material.opacity=.65+.25*Math.sin(t*2+i)});
+  waterJet.scale.y=.9+Math.sin(t*2.4)*.12;
+  waterStreams.forEach((p,i)=>{p.scale.y=.8+Math.sin(t*3+i)*.22;p.material.opacity=.65+.25*Math.sin(t*2+i)});
   statue.rotation.y=Math.sin(t*.2)*.06;
   [amelie,guard,mage,merchant].forEach((p,i)=>{p.position.y=Math.sin(t*1.5+i)*.025;p.rotation.y=Math.sin(t*.5+i)*.04});
   const moving=!!player.userData.walking;
