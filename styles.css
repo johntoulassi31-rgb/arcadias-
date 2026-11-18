@@ -129,3 +129,15 @@ button{font:inherit}
  #bottom-dock{left:30%;right:13%;height:18%}
  #chat-panel{width:27%;height:20%}
 }
+
+/* Fix tactile hit areas: decorative HUD layers must never swallow button taps. */
+#mmorpg-hud{pointer-events:none;z-index:70}
+#mmorpg-hud .top-menu,#mmorpg-hud .top-menu button{pointer-events:auto;position:relative}
+#bottom-dock{z-index:75;pointer-events:auto}
+#bottom-dock button{position:relative;z-index:76;pointer-events:auto;touch-action:manipulation;cursor:pointer}
+#bottom-dock #combat-button{z-index:78}
+.top-menu button{touch-action:manipulation;cursor:pointer}
+#game-panel{z-index:100;pointer-events:auto;max-height:82%;overflow:auto}
+#game-panel button{position:relative;z-index:101;pointer-events:auto;touch-action:manipulation;cursor:pointer}
+.panel-action{display:block;width:100%;margin:10px 0;padding:11px 13px;border:1px solid #d9b96e;border-radius:9px;background:linear-gradient(145deg,#695022,#2c2112);color:#fff1c7;font-weight:800;box-shadow:inset 0 1px 2px #fff5c455,0 3px 8px #0008}
+.panel-action:active,#bottom-dock button:active,.top-menu button:active{transform:scale(.96);filter:brightness(1.25)}
