@@ -201,11 +201,11 @@ export function createWorld(canvas){
  function enterInterior(){
   if(inside)return false;
   returnPosition={x:player.position.x,z:player.position.z};
-  world.visible=false;interior.visible=true;inside=true;player.position.set(0,0,4);player.rotation.y=Math.PI;return true;
+  world.remove(player);interior.add(player);world.visible=false;interior.visible=true;inside=true;player.position.set(0,0,4);player.rotation.y=Math.PI;return true;
  }
  function exitInterior(){
   if(!inside)return false;
-  interior.visible=false;world.visible=true;inside=false;player.position.set(returnPosition.x,0,returnPosition.z+1.5);return true;
+  interior.remove(player);world.add(player);interior.visible=false;world.visible=true;inside=false;player.position.set(returnPosition.x,0,returnPosition.z+1.5);return true;
  }
 
  function collides(x,z){
