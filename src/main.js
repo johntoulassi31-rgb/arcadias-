@@ -2,6 +2,8 @@ import {createWorld} from "./world.js";
 const canvas=document.querySelector("#world3d");
 const game=createWorld(canvas);
 const held=new Set();
+const activePointers=new Map();
+const keyboardHeld=new Set();
 const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const keyMap={ArrowUp:"up",KeyW:"up",ArrowDown:"down",KeyS:"down",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right"};
 const status=document.querySelector("#move-state"),hint=document.querySelector("#collision-hint");
@@ -16,31 +18,46 @@ const lines=[
 ];
 function toastMessage(s){toast.textContent=s;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2000)}
 function blocked(){hint.classList.add("visible");clearTimeout(hintTimer);hintTimer=setTimeout(()=>hint.classList.remove("visible"),550)}
+function syncHeld(){
+ held.clear();keyboardHeld.forEach(d=>held.add(d));activePointers.forEach(d=>held.add(d));update();
+}
 function update(){
  const labels={up:"Haut",down:"Bas",left:"Gauche",right:"Droite"};
  const label=held.size?[...held].map(d=>labels[d]).join(" + "):"Prêt";
- status.value=label;status.textContent=label;
+ if(status){status.value=label;status.textContent=label;}
  document.querySelectorAll(".direction").forEach(b=>b.classList.toggle("pressed",held.has(b.dataset.dir)));
  const atDoor=game.nearDoor(),atGuide=game.nearAmelie(),atInnkeeper=game.nearInnkeeper();
  interactButton.hidden=!(atDoor||atGuide||atInnkeeper)||!dialogue.hidden;
  interactButton.textContent=atDoor?(game.insideBuilding?"Sortir":"Entrer dans l auberge"):atInnkeeper?"Parler au tavernier":"Parler · E";
 }
-function press(d){held.add(d);update()}function release(d){held.delete(d);update()}
+function releaseAll(){
+ keyboardHeld.clear();activePointers.clear();syncHeld();
+}
 document.querySelectorAll(".direction").forEach(b=>{
  const d=b.dataset.dir;
- b.addEventListener("pointerdown",e=>{e.preventDefault();b.setPointerCapture(e.pointerId);press(d)});
- const stop=e=>{e.preventDefault();release(d)};
- b.addEventListener("pointerup",stop);b.addEventListener("pointercancel",stop);
- b.addEventListener("lostpointercapture",()=>release(d));
+ b.addEventListener("pointerdown",e=>{
+  e.preventDefault();if(activePointers.has(e.pointerId))return;
+  activePointers.set(e.pointerId,d);
+  try{b.setPointerCapture(e.pointerId)}catch{}
+  syncHeld();
+ });
+ b.addEventListener("contextmenu",e=>e.preventDefault());
+ b.addEventListener("lostpointercapture",e=>{
+  if(activePointers.delete(e.pointerId))syncHeld();
+ });
 });
+window.addEventListener("pointerup",e=>{if(activePointers.delete(e.pointerId))syncHeld()},{passive:true});
+window.addEventListener("pointercancel",e=>{if(activePointers.delete(e.pointerId))syncHeld()},{passive:true});
 window.addEventListener("keydown",e=>{
- const d=keyMap[e.code];if(d){e.preventDefault();press(d);return}
+ const d=keyMap[e.code];if(d){e.preventDefault();keyboardHeld.add(d);syncHeld();return}
  if(e.code==="KeyE"||e.code==="Enter"){if(!interactButton.hidden)interactButton.click()}
- if(e.code==="Escape"){dialogue.hidden=true;document.querySelector("#game-panel").hidden=true;activeNpc=null;update()}
+ if(e.code==="Escape"){dialogue.hidden=true;document.querySelector("#game-panel").hidden=true;activeNpc=null;releaseAll();update()}
 });
-window.addEventListener("keyup",e=>{const d=keyMap[e.code];if(d)release(d)});
-window.addEventListener("blur",()=>{held.clear();update()});
-document.addEventListener("visibilitychange",()=>{if(document.hidden){held.clear();update()}});
+window.addEventListener("keyup",e=>{const d=keyMap[e.code];if(d&&keyboardHeld.delete(d))syncHeld()});
+window.addEventListener("blur",releaseAll);
+window.addEventListener("pagehide",releaseAll);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)releaseAll()});
+document.addEventListener("touchcancel",releaseAll,{passive:true});
 function openDialogue(){
  activeNpc=true;dialogueStep=0;
  const inside=game.insideBuilding;
