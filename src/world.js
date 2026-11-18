@@ -149,13 +149,15 @@ export function createWorld(canvas){
   castleBlock(x,5.3,z-1.58,.72,1.7,.12,castleDark);
  }
  // Mur visible au fond et sur la droite de la place.
- castleBlock(13.9,0,-13.9,1.3,7.7,7.2,castleMat);\n castleBlock(13.9,0,-2.2,1.3,7.7,9.0,castleMat);
+ castleBlock(13.9,0,-13.9,1.3,7.7,7.2,castleMat);
+ castleBlock(13.9,0,-2.2,1.3,7.7,9.0,castleMat);
  castleBlock(7.4,0,-17.3,14.2,7.7,1.3,castleMat);
  tower(13.8,-17.1);tower(13.8,2.1);tower(1.3,-17.1);
  // Porte monumentale à arche sombre, encadrée de pierres taillées.
- castleBlock(13.05,0,-7.6,1.8,6.5,5.0,castleLight);
- castleBlock(13.0,0,-7.6,1.05,5.1,4.2,castleDark);
- castleBlock(13.0,0,-7.6,.72,4.6,3.6,wood);
+ castleBlock(13.05,0,-10.1,1.8,6.5,1.15,castleLight);
+ castleBlock(13.05,0,-5.1,1.8,6.5,1.15,castleLight);
+ castleBlock(13.05,6.05,-7.6,1.8,.9,5.8,castleLight);
+ castleBlock(13.0,.1,-7.6,.55,4.9,5.0,wood);
  for(let i=0;i<7;i++)castleBlock(13.0,5.35+i*.22,-7.6,1.9,.18,4.8,castleLight);
  // Bannières bleues et or sur les remparts.
  const bannerMat=new THREE.MeshStandardMaterial({color:0x173e78,roughness:.8});
