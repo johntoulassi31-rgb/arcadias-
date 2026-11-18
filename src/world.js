@@ -384,7 +384,7 @@ export function createWorld(canvas){
  renderer.setAnimationLoop(animate);
  function resize(){
   const w=canvas.clientWidth||window.innerWidth,h=canvas.clientHeight||window.innerHeight;
-  const aspect=w/h,viewHeight=30;
+  const aspect=w/h,viewHeight=25;
   camera.left=-viewHeight*aspect/2;camera.right=viewHeight*aspect/2;
   camera.top=viewHeight/2;camera.bottom=-viewHeight/2;
   camera.updateProjectionMatrix();renderer.setSize(w,h,false);
