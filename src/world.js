@@ -149,7 +149,7 @@ export function createWorld(canvas){
   castleBlock(x,5.3,z-1.58,.72,1.7,.12,castleDark);
  }
  // Mur visible au fond et sur la droite de la place.
- castleBlock(13.9,0,-7.5,1.3,7.7,21,castleMat);
+ castleBlock(13.9,0,-13.9,1.3,7.7,7.2,castleMat);\n castleBlock(13.9,0,-2.2,1.3,7.7,9.0,castleMat);
  castleBlock(7.4,0,-17.3,14.2,7.7,1.3,castleMat);
  tower(13.8,-17.1);tower(13.8,2.1);tower(1.3,-17.1);
  // Porte monumentale à arche sombre, encadrée de pierres taillées.
@@ -285,13 +285,16 @@ export function createWorld(canvas){
  }
  function exitInterior(){
   if(!inside)return false;
-  interior.remove(player);world.add(player);interior.visible=false;world.visible=true;inside=false;player.position.set(-13,0,5.0);return true;
+  interior.remove(player);world.add(player);interior.visible=false;world.visible=true;inside=false;player.position.set(-13,0,2.3);return true;
  }
 
  function collides(x,z){
   if(inside)return x<-6.5||x>6.5||z<-5||z>5;
   if(x<-17||x>17||z<-13||z>15)return true;
-  if(Math.hypot(x,z)<3.75)return true;
+  if(Math.hypot(x,z)<4.05)return true;
+  // Remparts infranchissables, sauf l'ouverture du grand portail royal.
+  if(x>13.0&&x<15.2&&z>-17.5&&z<3.0&&!(z>-10.1&&z<-5.1))return true;
+  if(z<-16.6&&x>0.3&&x<14.7)return true;
   return colliders.some(b=>{
    const inDoorway=b.kind==="inn"&&Math.abs(x+13)<.9&&z>2.45&&z<4.65;
    return !inDoorway&&Math.abs(x-b.x)<b.w*.52&&Math.abs(z-b.z)<b.d*.52;
