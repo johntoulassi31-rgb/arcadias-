@@ -353,7 +353,7 @@ export function createWorld(canvas){
  function nameplate(label){
   const c=document.createElement("canvas");c.width=512;c.height=112;
   const ctx=c.getContext("2d");ctx.fillStyle="rgba(8,13,24,.88)";
-  ctx.strokeStyle="#d4b66d";ctx.lineWidth=5;ctx.beginPath();ctx.roundRect(8,8,496,96,18);ctx.fill();ctx.stroke();
+  ctx.strokeStyle="#d4b66d";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(26,8);ctx.lineTo(486,8);ctx.quadraticCurveTo(504,8,504,26);ctx.lineTo(504,86);ctx.quadraticCurveTo(504,104,486,104);ctx.lineTo(26,104);ctx.quadraticCurveTo(8,104,8,86);ctx.lineTo(8,26);ctx.quadraticCurveTo(8,8,26,8);ctx.closePath();ctx.fill();ctx.stroke();
   ctx.font="bold 36px Georgia";ctx.textAlign="center";ctx.fillStyle="#fff0c8";ctx.fillText(label,256,70);
   const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
   const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
