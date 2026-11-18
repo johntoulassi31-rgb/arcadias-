@@ -160,9 +160,9 @@ export function createWorld(canvas){
   renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
  }
  window.addEventListener("resize",resize);resize();
- function move(dx,dz){
+ function move(dx,dz,dt){
   const len=Math.hypot(dx,dz)||1;dx/=len;dz/=len;
-  const speed=5.2*clock.getDelta();
+  const speed=5.2*Math.min(dt,.05);
   const nx=player.position.x+dx*speed,nz=player.position.z+dz*speed;
   let moved=false;
   if(!collides(nx,player.position.z)){player.position.x=nx;moved=true}
