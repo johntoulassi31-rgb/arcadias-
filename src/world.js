@@ -314,8 +314,34 @@ export function createWorld(canvas){
    glint.position.set(side*.13-.012,2.0,-.34);g.add(glint);
   }
   const collar=new THREE.Mesh(new THREE.ConeGeometry(.32,.35,5),gold);collar.position.set(0,1.52,0);g.add(collar);
-  const cape=new THREE.Mesh(new THREE.ConeGeometry(.55,.95,4),mat(isPlayer?0x6c2940:0x3e5d83));cape.position.set(0,1.0,.42);cape.rotation.x=-.18;cape.castShadow=true;g.add(cape);
-  if(isPlayer){const sword=new THREE.Mesh(new THREE.BoxGeometry(.10,1.05,.12),mat(0xd7e3ec,.25));sword.position.set(.62,1.12,-.12);sword.rotation.z=-.28;g.add(sword)}
+  const cape=new THREE.Mesh(new THREE.ConeGeometry(.55,.95,5),mat(isPlayer?0x8b2438:color===0x613b8b?0x59308b:0x3e5d83));cape.position.set(0,1.0,.42);cape.rotation.x=-.18;cape.castShadow=true;g.add(cape);
+  // Costume layers: leather belt, reinforced boots, shoulder pieces and chest ornament.
+  const belt=new THREE.Mesh(new THREE.BoxGeometry(.78,.16,.58),woodLight);belt.position.set(0,.83,0);g.add(belt);
+  const buckle=new THREE.Mesh(new THREE.BoxGeometry(.17,.18,.08),gold);buckle.position.set(0,.83,-.31);g.add(buckle);
+  for(const side of [-1,1]){
+   const boot=new THREE.Mesh(new THREE.CylinderGeometry(.19,.23,.42,8),wood);boot.position.set(side*.2,.28,-.04);boot.castShadow=true;g.add(boot);
+   const glove=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),gold);glove.position.set(side*.49,.96,0);g.add(glove);
+  }
+  if(isPlayer||color===0x6b7182){
+   const armorMat=mat(isPlayer?0x42536a:0x66758a,.42);
+   const chest=new THREE.Mesh(new THREE.BoxGeometry(.78,.68,.18),armorMat);chest.position.set(0,1.24,-.31);chest.castShadow=true;g.add(chest);
+   const chestTrim=new THREE.Mesh(new THREE.BoxGeometry(.66,.07,.21),gold);chestTrim.position.set(0,1.52,-.32);g.add(chestTrim);
+   for(const side of [-1,1]){
+    const pauldron=new THREE.Mesh(new THREE.SphereGeometry(.27,9,7),armorMat);pauldron.position.set(side*.48,1.48,0);pauldron.scale.set(1,.72,1);pauldron.castShadow=true;g.add(pauldron);
+    const knee=new THREE.Mesh(new THREE.SphereGeometry(.18,8,7),gold);knee.position.set(side*.2,.52,-.12);g.add(knee);
+   }
+  }
+  if(color===0x613b8b){
+   const orb=new THREE.Mesh(new THREE.SphereGeometry(.18,12,10),new THREE.MeshStandardMaterial({color:0x79dcff,emissive:0x219fff,emissiveIntensity:2}));
+   orb.position.set(.66,1.65,-.05);g.add(orb);
+   const staff=new THREE.Mesh(new THREE.CylinderGeometry(.045,.07,2.2,7),wood);staff.position.set(.72,1.1,.18);g.add(staff);
+  }
+  if(isPlayer){
+   const blade=new THREE.Mesh(new THREE.ConeGeometry(.11,1.28,4),new THREE.MeshStandardMaterial({color:0xdceaf5,metalness:.85,roughness:.18}));
+   blade.position.set(.68,1.32,-.18);blade.rotation.z=-.18;blade.castShadow=true;g.add(blade);
+   const guard=new THREE.Mesh(new THREE.BoxGeometry(.58,.09,.13),gold);guard.position.set(.68,.72,-.18);guard.rotation.z=-.18;g.add(guard);
+   const grip=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,.34,8),wood);grip.position.set(.68,.48,-.18);g.add(grip);
+  }
   return g;
  }
  const player=character(-1.8,3.8,0x344c7d,true);
@@ -323,7 +349,20 @@ export function createWorld(canvas){
  const guard=character(11.6,-5.4,0x6b7182,false);
  const mage=character(10.8,7.0,0x613b8b,false);
  const merchant=character(-10.8,-2.2,0xb17b45,false);
-
+ // Floating nameplates and quest marker, matching the reference RPG interface.
+ function nameplate(label){
+  const c=document.createElement("canvas");c.width=512;c.height=112;
+  const ctx=c.getContext("2d");ctx.fillStyle="rgba(8,13,24,.88)";
+  ctx.strokeStyle="#d4b66d";ctx.lineWidth=5;ctx.beginPath();ctx.roundRect(8,8,496,96,18);ctx.fill();ctx.stroke();
+  ctx.font="bold 36px Georgia";ctx.textAlign="center";ctx.fillStyle="#fff0c8";ctx.fillText(label,256,70);
+  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  sprite.scale.set(3.8,.84,1);return sprite;
+ }
+ [[amelie,"Amélie · Guide"],[guard,"Garde royal"],[mage,"Morgane · Mage"],[merchant,"Élise · Marchande"]].forEach(([npc,label])=>{
+  const tag=nameplate(label);tag.position.set(0,3.35,0);npc.add(tag);
+ });
+ const questMark=nameplate("❗ QUÊTE");questMark.scale.set(2.2,.52,1);questMark.position.set(0,4.1,0);amelie.add(questMark);
 
  const colliders=buildings.map(b=>b.bounds);
  const interior=new THREE.Group();scene.add(interior);interior.visible=false;
