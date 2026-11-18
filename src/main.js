@@ -71,7 +71,7 @@ function frame(t){
  const dt=Math.min(.05,(t-(last||t))/1000);last=t;
  let x=0,z=0;for(const d of held){x+=vectors[d][0];z+=vectors[d][1]}
  if(x||z){
-  const moved=game.move(x,z);
+  const moved=game.move(x,z,dt);
   if(!moved)blocked();
  }
  update();requestAnimationFrame(frame);
