@@ -157,8 +157,7 @@ export function createWorld(canvas){
  castleBlock(13.05,0,-10.1,1.8,6.5,1.15,castleLight);
  castleBlock(13.05,0,-5.1,1.8,6.5,1.15,castleLight);
  castleBlock(13.05,6.05,-7.6,1.8,.9,5.8,castleLight);
- castleBlock(13.0,.1,-7.6,.55,4.9,5.0,wood);
- for(let i=0;i<7;i++)castleBlock(13.0,5.35+i*.22,-7.6,1.9,.18,4.8,castleLight);
+ // L'ouverture centrale reste réellement praticable pour le personnage.
  // Bannières bleues et or sur les remparts.
  const bannerMat=new THREE.MeshStandardMaterial({color:0x173e78,roughness:.8});
  function banner(x,z){
