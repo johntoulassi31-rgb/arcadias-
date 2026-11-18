@@ -197,7 +197,7 @@ export function createWorld(canvas){
  for(const x of [-6,6]){const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.48,.55,1.25,10),woodLight);barrel.position.set(x,.63,3.8);barrel.castShadow=true;interior.add(barrel)}
  const innkeeper=character(0,0,0xb17b45,false);world.remove(innkeeper);interior.add(innkeeper);innkeeper.position.set(3.7,0,-2.5);innkeeper.rotation.y=Math.PI;
  let inside=false,returnPosition={x:-10,z:-10};
- function nearDoor(){return !inside&&Math.hypot(player.position.x-(-10),player.position.z-(-10))<2.1}
+ function nearDoor(){return inside?player.position.z>3.1:Math.hypot(player.position.x-(-10),player.position.z-(-10))<2.1}
  function enterInterior(){
   if(inside)return false;
   returnPosition={x:player.position.x,z:player.position.z};
