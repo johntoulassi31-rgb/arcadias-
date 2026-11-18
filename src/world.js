@@ -168,11 +168,11 @@ export function createWorld(canvas){
   house(-7.5,11.5,4.8,4.2,wall2)
  ];
  // Enceinte fortifiée d'Ardencourt : mur de pierre, tours, créneaux et portail.
- const castleMat=mat(0x777d83),castleLight=mat(0xa4a7a4),castleDark=mat(0x454c58);
+ const castleMat=new THREE.MeshStandardMaterial({color:0xb6b5b0,map:stoneTex,roughness:1}),castleLight=mat(0xd0c9b9),castleDark=mat(0x454c58);
  function castleBlock(x,y,z,w,h,d,m=castleMat){return box(world,w,h,d,m,x,y,z)}
  function tower(x,z){
   castleBlock(x,0,z,3.1,8.2,3.1,castleMat);
-  castleBlock(x,7.8,z,3.55,.55,3.55,castleLight);
+  castleBlock(x,7.8,z,3.55,.55,3.55,castleLight);\n  castleBlock(x,3.9,z,3.18,.16,3.18,castleLight);
   for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){
    castleBlock(x+a*1.15,8.35,z+b*1.15,.55,.7,.55,castleLight);
   }
@@ -222,6 +222,16 @@ export function createWorld(canvas){
  const body=new THREE.Mesh(new THREE.ConeGeometry(.58,1.55,7),gold);body.position.y=.75;body.castShadow=true;statue.add(body);
  const head=new THREE.Mesh(new THREE.SphereGeometry(.32,12,10),gold);head.position.y=1.65;statue.add(head);
  const waterJet=new THREE.Mesh(new THREE.CylinderGeometry(.08,.18,1.2,10),water);waterJet.position.set(0,2.8,0);world.add(waterJet);
+ const waterStreams=[];
+ for(let i=0;i<6;i++){
+  const a=i*Math.PI/3;
+  const stream=new THREE.Mesh(new THREE.CylinderGeometry(.035,.09,1.05,8),water);
+  stream.position.set(Math.cos(a)*1.35,1.55,Math.sin(a)*1.35);
+  stream.rotation.z=Math.cos(a)*-.48;stream.rotation.x=Math.sin(a)*.48;world.add(stream);waterStreams.push(stream);
+  const droplet=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),new THREE.MeshBasicMaterial({color:0xb8f4ff}));
+  droplet.position.set(Math.cos(a)*1.9,1.85,Math.sin(a)*1.9);world.add(droplet);
+ }
+ const waterGlow=new THREE.PointLight(0x4acfff,1.5,7);waterGlow.position.set(0,2.3,0);world.add(waterGlow);
 
  function tree(x,z,s=1){
   const g=new THREE.Group();g.position.set(x,0,z);world.add(g);
@@ -272,7 +282,25 @@ export function createWorld(canvas){
   const rl=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.58,3,6),wood);rl.position.y=-.22;rightLeg.add(rl);
   g.userData.limbs={leftArm,rightArm,leftLeg,rightLeg};
   const head=new THREE.Mesh(new THREE.SphereGeometry(.34,14,12),skin);head.position.y=1.92;head.castShadow=true;g.add(head);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(.36,12,10),mat(isPlayer?0x292334:0x4c3326));hair.position.set(0,2.08,-.03);hair.scale.set(1,.72,1);g.add(hair);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(.36,14,12),mat(isPlayer?0x292334:color===0x613b8b?0x6c3b9b:0x75472f));hair.position.set(0,2.08,-.03);hair.scale.set(1,.72,1);g.add(hair);
+  // Anime/webtoon silhouette: layered fringe, side locks, bright eyes and face highlights.
+  const hairMat=hair.material;
+  for(let k=0;k<5;k++){
+   const spike=new THREE.Mesh(new THREE.ConeGeometry(.19,.52,5),hairMat);
+   spike.position.set(-.25+k*.125,2.22,-.22);spike.rotation.z=(k-2)*-.22;spike.rotation.x=-.35;spike.castShadow=true;g.add(spike);
+  }
+  for(const side of [-1,1]){
+   const lock=new THREE.Mesh(new THREE.ConeGeometry(.13,.62,6),hairMat);
+   lock.position.set(side*.31,1.91,-.02);lock.rotation.z=side*.22;lock.castShadow=true;g.add(lock);
+  }
+  const eyeMat=new THREE.MeshStandardMaterial({color:isPlayer?0x263d70:0x503b70,emissive:isPlayer?0x101d40:0x100b22});
+  for(const side of [-1,1]){
+   const eye=new THREE.Mesh(new THREE.SphereGeometry(.055,8,6),eyeMat);
+   eye.scale.set(1,.65,.35);eye.position.set(side*.13,1.98,-.315);g.add(eye);
+   const glint=new THREE.Mesh(new THREE.SphereGeometry(.018,6,5),new THREE.MeshBasicMaterial({color:0xffffff}));
+   glint.position.set(side*.13-.012,2.0,-.34);g.add(glint);
+  }
+  const collar=new THREE.Mesh(new THREE.ConeGeometry(.32,.35,5),gold);collar.position.set(0,1.52,0);g.add(collar);
   const cape=new THREE.Mesh(new THREE.ConeGeometry(.55,.95,4),mat(isPlayer?0x6c2940:0x3e5d83));cape.position.set(0,1.0,.42);cape.rotation.x=-.18;cape.castShadow=true;g.add(cape);
   if(isPlayer){const sword=new THREE.Mesh(new THREE.BoxGeometry(.10,1.05,.12),mat(0xd7e3ec,.25));sword.position.set(.62,1.12,-.12);sword.rotation.z=-.28;g.add(sword)}
   return g;
@@ -335,7 +363,7 @@ export function createWorld(canvas){
  const clock=new THREE.Clock();
  function animate(){
   const t=clock.getElapsedTime();
-  waterJet.scale.y=.9+Math.sin(t*2.4)*.12;
+  waterJet.scale.y=.9+Math.sin(t*2.4)*.12;\n  waterStreams.forEach((p,i)=>{p.scale.y=.8+Math.sin(t*3+i)*.22;p.material.opacity=.65+.25*Math.sin(t*2+i)});
   statue.rotation.y=Math.sin(t*.2)*.06;
   [amelie,guard,mage,merchant].forEach((p,i)=>{p.position.y=Math.sin(t*1.5+i)*.025;p.rotation.y=Math.sin(t*.5+i)*.04});
   const moving=!!player.userData.walking;
