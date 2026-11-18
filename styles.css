@@ -1,0 +1,17 @@
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:#080c14;overflow:hidden}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;touch-action:none}
+#game{position:relative;width:100vw;height:100dvh;display:grid;place-items:center;overflow:hidden;background:#101522}
+#scene{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+#scene-status{position:absolute;top:12px;left:50%;transform:translateX(-50%);padding:7px 12px;border-radius:8px;background:#101522d9;color:#fff;font-size:12px;z-index:2}
+#scene-status.hidden{display:none}
+#player-marker{position:absolute;left:50%;top:52%;width:18px;height:18px;border:2px solid #65d9ff;border-radius:50%;box-shadow:0 0 12px #29bfff;transform:translate(-50%,-50%);pointer-events:none;display:none}
+#psp-pad{--unit:clamp(48px,8.2vw,76px);position:absolute;left:max(14px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));width:calc(var(--unit)*3);height:calc(var(--unit)*3);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);gap:3px;z-index:10;touch-action:none;user-select:none}
+.direction{border:1px solid #d9c18b;border-radius:13px;background:linear-gradient(145deg,#252a35eF,#080b13ee);color:#fff1c7;font-size:clamp(22px,4vw,32px);font-weight:900;text-shadow:0 2px 3px #000;box-shadow:inset 0 1px 2px #ffffff45,0 4px 10px #0009;display:grid;place-items:center;padding:0;touch-action:none;-webkit-tap-highlight-color:transparent}
+.direction:active,.direction.pressed{background:linear-gradient(145deg,#806a3b,#27202a);color:#fff;box-shadow:inset 0 2px 8px #000b,0 0 12px #ffd36b88}
+.up{grid-area:1/2}.left{grid-area:2/1}.right{grid-area:2/3}.down{grid-area:3/2}
+.pad-center{grid-area:2/2;border-radius:9px;background:radial-gradient(circle,#555d69,#171b24 70%);border:1px solid #b9a16d;box-shadow:inset 0 1px 4px #000}
+#movement-readout{position:absolute;left:calc(max(14px,env(safe-area-inset-left)) + 8px);bottom:calc(max(20px,env(safe-area-inset-bottom)) + var(--unit,64px)*3 + 8px);padding:4px 8px;border-radius:6px;background:#080b13b8;color:#fff;font-size:11px;opacity:.8;pointer-events:none}
+@media(hover:hover) and (pointer:fine){#psp-pad{opacity:.78}}
+@media(orientation:portrait){#game{width:100vw;height:100dvh}#scene{object-fit:contain}#psp-pad{--unit:clamp(46px,14vw,66px)}}
+@media(prefers-reduced-motion:no-preference){.direction{transition:background .08s,transform .08s}.direction:active{transform:scale(.96)}}
