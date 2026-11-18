@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#101522">
+  <title>ARCADIAS — Ardencourt</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="game" aria-label="ARCADIAS, place d'Ardencourt">
+    <img id="scene" src="./assets/ardencourt-reference.webp" alt="Maquette de la place d'Ardencourt" draggable="false">
+    <div id="scene-status" role="status">Chargement de la scène…</div>
+    <div id="player-marker" aria-hidden="true"></div>
+    <nav id="psp-pad" aria-label="Commandes de déplacement">
+      <button class="direction up" data-dir="up" aria-label="Haut">▲</button>
+      <button class="direction left" data-dir="left" aria-label="Gauche">◀</button>
+      <button class="direction right" data-dir="right" aria-label="Droite">▶</button>
+      <button class="direction down" data-dir="down" aria-label="Bas">▼</button>
+      <span class="pad-center" aria-hidden="true"></span>
+    </nav>
+    <output id="movement-readout" aria-live="polite">Prêt</output>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
