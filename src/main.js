@@ -91,13 +91,22 @@ function panel(kind){
  character:["Personnage",`<p>Niveau ${state.level} · Aventurier</p><p>PV : ${state.hp}/820</p><p>PM : ${state.mp}/220</p><p>Or : ${state.gold.toLocaleString("fr-FR")}</p>`],
  inventory:["Inventaire",`<ul>${state.inventory.map(x=>"<li>"+x+"</li>").join("")}</ul>`],
  quests:["Quêtes",state.quest?'<p><strong>Le secret de la librairie</strong><br>Retrouver la librairie à Lyon.</p>':'<p>Parle à Amélie sur la place.</p>'],
- map:["Carte",'<p>Ardencourt — place centrale.</p><p>Les maisons sont maintenant des bâtiments 3D avec collisions.</p>']
+ map:["Carte",'<p><strong>Ardencourt — capitale royale</strong></p><p>Place centrale · Fontaine des fondateurs · Porte du royaume.</p><p>Coordonnées : 128, 64</p>'],
+ skills:["Compétences",'<p><strong>Frappe héroïque</strong> — attaque rapprochée.</p><p><strong>Onde arcanique</strong> — compétence magique.</p><p><strong>Roulade</strong> — esquive rapide.</p>'],
+ mount:["Monture",'<p>Aucune monture équipée.</p><p>Débloquez votre première monture auprès du maître des écuries.</p>'],
+ familiars:["Familiers",'<p>Aucun familier invoqué.</p><p>Les familiers vous accompagneront dans vos aventures.</p>'],
+ shop:["Boutique",'<p>Marchandises disponibles :</p><ul><li>Potion de soin — 120 or</li><li>Potion de mana — 150 or</li><li>Clé de coffre — 500 or</li></ul>'],
+ events:["Événements",'<p><strong>Festival d’Ardencourt</strong></p><p>Participez aux activités de la cité pour gagner des récompenses.</p>'],
+ rewards:["Récompenses",'<p>Récompense de connexion : en attente.</p><p>Récompense quotidienne : 100 pièces d’or.</p>'],
+ menu:["Menu du jeu",'<p>Profil · Paramètres · Aide · Sauvegarde</p><p>ARCADIAS — Royaume d’Asterion</p>'],
+ mode:["Mode de jeu",'<p><strong>Exploration</strong> — déplacements libres dans Ardencourt.</p><p>Le mode combat sera activé lors des rencontres avec des monstres.</p>']
  };
  const [title,body]=views[kind];document.querySelector("#panel-title").textContent=title;document.querySelector("#panel-content").innerHTML=body;document.querySelector("#game-panel").hidden=false;
 }
 document.querySelectorAll("[data-panel]").forEach(b=>b.addEventListener("click",()=>panel(b.dataset.panel)));
 document.querySelector("#panel-close").addEventListener("click",()=>document.querySelector("#game-panel").hidden=true);
 document.querySelector("#save-game").addEventListener("click",save);
+document.querySelector("#combat-button").addEventListener("click",()=>toastMessage("Mode combat : aucune cible à proximité."));
 function frame(t){
  const dt=Math.min(.05,(t-(last||t))/1000);last=t;
  let x=0,z=0;for(const d of held){x+=vectors[d][0];z+=vectors[d][1]}
