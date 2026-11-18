@@ -196,7 +196,26 @@ export function createWorld(canvas){
   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22*s,.32*s,1.5*s,8),wood);trunk.position.y=.75*s;trunk.castShadow=true;g.add(trunk);
   for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.SphereGeometry((1.0-i*.13)*s,10,8),i===1?leafLight:leaf);crown.position.set(0,(1.7+i*.62)*s,0);crown.scale.set(1,.88,1);crown.castShadow=true;g.add(crown)}
  }
- [[-15,-3],[-15,2],[-7,-2],[7,-2],[15,-2],[15,9],[-15,9],[-5,9],[5,9]].forEach(p=>tree(p[0],p[1],.8+Math.random()*.3));
+ [[-15,-3],[-15,2],[-7,-2],[7,-2],[15,-2],[15,9],[ -15,9],[-5,9],[5,9]].forEach(p=>tree(p[0],p[1],.8+Math.random()*.3));
+ // Jardinières rectangulaires en pierre et massifs fleuris autour de la place.
+ function planter(x,z,w=3,d=1.5){
+  const g=new THREE.Group();g.position.set(x,0,z);world.add(g);
+  box(g,w,.42,d,stoneDark,0,0,0);
+  box(g,w-.22,.16,d-.22,grass,0,.42,0);
+  for(let i=0;i<Math.floor(w*2);i++){
+   const fx=-w*.42+(i/(Math.max(1,Math.floor(w*2)-1)))*w*.84;
+   const bush=new THREE.Mesh(new THREE.SphereGeometry(.34,8,7),i%2?leaf:leafLight);bush.position.set(fx,.72,0);bush.scale.set(1,.8,1);bush.castShadow=true;g.add(bush);
+   const flower=new THREE.Mesh(new THREE.SphereGeometry(.12,7,6),mat(i%3===0?0xe9a0b4:i%3===1?0xf1d36d:0xd6b6ef));flower.position.set(fx,.98,.12);g.add(flower);
+  }
+ }
+ planter(-7.2,1.0,3.2,1.8);planter(7.4,-1.6,3.0,1.8);planter(7.8,7.8,3.5,1.6);
+ planter(-5.8,-12.0,4.2,1.5);planter(2.8,10.5,3.0,1.5);
+ // Cristal bleu sur son autel, à droite de la place.
+ const crystalBase=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.45,.55,8),stoneDark);crystalBase.position.set(11.0,.28,8.7);crystalBase.castShadow=true;world.add(crystalBase);
+ const crystalPed=new THREE.Mesh(new THREE.CylinderGeometry(.65,.9,1.15,6),stone);crystalPed.position.set(11.0,1.0,8.7);crystalPed.castShadow=true;world.add(crystalPed);
+ const crystalMat=new THREE.MeshStandardMaterial({color:0x55dfff,emissive:0x168bff,emissiveIntensity:1.8,metalness:.35,roughness:.18});
+ const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(.95,0),crystalMat);crystal.position.set(11.0,2.35,8.7);crystal.scale.set(.68,1.55,.68);crystal.castShadow=true;world.add(crystal);
+ const crystalLight=new THREE.PointLight(0x42caff,2.8,8);crystalLight.position.set(11,2.2,8.7);world.add(crystalLight);
  function lamp(x,z){
   const g=new THREE.Group();g.position.set(x,0,z);world.add(g);
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.12,2.5,8),wood);pole.position.y=1.25;pole.castShadow=true;g.add(pole);
@@ -258,7 +277,7 @@ export function createWorld(canvas){
  for(const x of [-6,6]){const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.48,.55,1.25,10),woodLight);barrel.position.set(x,.63,3.8);barrel.castShadow=true;interior.add(barrel)}
  const innkeeper=character(0,0,0xb17b45,false);world.remove(innkeeper);interior.add(innkeeper);innkeeper.position.set(3.7,0,-2.5);innkeeper.rotation.y=Math.PI;
  let inside=false,returnPosition={x:-10,z:-10};
- function nearDoor(){return inside?player.position.z>4.1:Math.hypot(player.position.x-(-10),player.position.z-(-10))<2.1}
+ function nearDoor(){return inside?player.position.z>4.1:Math.hypot(player.position.x-(-13),player.position.z-3.65)<2.2}
  function enterInterior(){
   if(inside)return false;
   returnPosition={x:player.position.x,z:player.position.z};
@@ -266,7 +285,7 @@ export function createWorld(canvas){
  }
  function exitInterior(){
   if(!inside)return false;
-  interior.remove(player);world.add(player);interior.visible=false;world.visible=true;inside=false;player.position.set(-10,0,-11.5);return true;
+  interior.remove(player);world.add(player);interior.visible=false;world.visible=true;inside=false;player.position.set(-13,0,5.0);return true;
  }
 
  function collides(x,z){
@@ -274,7 +293,7 @@ export function createWorld(canvas){
   if(x<-17||x>17||z<-13||z>15)return true;
   if(Math.hypot(x,z)<3.75)return true;
   return colliders.some(b=>{
-   const inDoorway=b.kind==="inn"&&Math.abs(x+10)<.85&&z<-9.35&&z>-11.2;
+   const inDoorway=b.kind==="inn"&&Math.abs(x+13)<.9&&z>2.45&&z<4.65;
    return !inDoorway&&Math.abs(x-b.x)<b.w*.52&&Math.abs(z-b.z)<b.d*.52;
   });
  }
