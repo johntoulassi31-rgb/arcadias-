@@ -21,7 +21,9 @@ function update(){
  const label=held.size?[...held].map(d=>labels[d]).join(" + "):"Prêt";
  status.value=label;status.textContent=label;
  document.querySelectorAll(".direction").forEach(b=>b.classList.toggle("pressed",held.has(b.dataset.dir)));
- interactButton.hidden=!game.nearAmelie()||!dialogue.hidden;
+ const atDoor=game.nearDoor(),atGuide=game.nearAmelie(),atInnkeeper=game.nearInnkeeper();
+ interactButton.hidden=!(atDoor||atGuide||atInnkeeper)||!dialogue.hidden;
+ interactButton.textContent=atDoor?(game.insideBuilding?"Sortir":"Entrer dans l auberge"):atInnkeeper?"Parler au tavernier":"Parler · E";
 }
 function press(d){held.add(d);update()}function release(d){held.delete(d);update()}
 document.querySelectorAll(".direction").forEach(b=>{
@@ -40,19 +42,31 @@ window.addEventListener("keyup",e=>{const d=keyMap[e.code];if(d)release(d)});
 window.addEventListener("blur",()=>{held.clear();update()});
 document.addEventListener("visibilitychange",()=>{if(document.hidden){held.clear();update()}});
 function openDialogue(){
- activeNpc=true;dialogueStep=0;document.querySelector("#dialogue-name").textContent="Amélie";
- dialogueText.textContent=lines[0];dialogue.hidden=false;interactButton.hidden=true;
+ activeNpc=true;dialogueStep=0;
+ const inside=game.insideBuilding;
+ const speech=inside?["Bienvenue au Dragon d Or ! Installe-toi près du feu, voyageur.","Les routes vers Lyon sont longues. Une vieille librairie y cacherait un secret.","Tu peux consulter le tableau des contrats près du comptoir."]:lines;
+ document.querySelector("#dialogue-name").textContent=inside?"Tavernier":"Amélie";
+ dialogueText.textContent=speech[0];dialogue.hidden=false;interactButton.hidden=true;
+ dialogue.dataset.speech=JSON.stringify(speech);
 }
 document.querySelector("#dialogue-next").addEventListener("click",()=>{
  if(!activeNpc)return;dialogueStep++;
- if(dialogueStep>=lines.length){
+ const speech=JSON.parse(dialogue.dataset.speech||"[]");
+ if(dialogueStep>=speech.length){
   if(!state.quest){state.quest=1;toastMessage("Quête ajoutée : Le secret de la librairie");save()}
   dialogue.hidden=true;activeNpc=null;update();return;
  }
- dialogueText.textContent=lines[dialogueStep];
+ dialogueText.textContent=speech[dialogueStep];
 });
 document.querySelector("#dialogue-close").addEventListener("click",()=>{dialogue.hidden=true;activeNpc=null;update()});
-interactButton.addEventListener("click",openDialogue);
+interactButton.addEventListener("click",()=>{
+ if(game.nearDoor()){
+  if(game.insideBuilding){game.exitInterior();toastMessage("Tu es sorti de l auberge.");}
+  else{game.enterInterior();toastMessage("Bienvenue au Dragon d Or.");}
+  update();return;
+ }
+ openDialogue();
+});
 function save(){try{localStorage.setItem("arcadias-3d-save",JSON.stringify(state));toastMessage("Progression sauvegardée.")}catch{toastMessage("Sauvegarde impossible.")}}
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem("arcadias-3d-save")||"{}"))}catch{}}
 function panel(kind){
