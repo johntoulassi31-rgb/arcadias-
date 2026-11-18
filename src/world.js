@@ -24,13 +24,44 @@ export function createWorld(canvas){
  sun.shadow.bias=-.00025;scene.add(sun);
 
  const mat=(color,roughness=.85)=>new THREE.MeshStandardMaterial({color,roughness});
- const stone=mat(0xc8bda5),stoneDark=mat(0x827c70),mortar=mat(0x9d9585);
+ // Hand-painted style procedural textures: masonry, paving, terracotta and timber.
+ function paintedTexture(base,draw,size=256){
+  const c=document.createElement("canvas");c.width=c.height=size;
+  const ctx=c.getContext("2d");ctx.fillStyle=base;ctx.fillRect(0,0,size,size);draw(ctx,size);
+  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.anisotropy=4;return tex;
+ }
+ const stoneTex=paintedTexture("#9a968e",(c,n)=>{
+  for(let y=0;y<n;y+=42)for(let x=0;x<n;x+=64){
+   c.fillStyle=["#b9b3a6","#aaa69d","#c7c0b0","#88877f"][(x/64+y/42)%4|0];
+   c.fillRect(x+2,y+2,60,38);c.strokeStyle="#706e68";c.lineWidth=2;c.strokeRect(x+2,y+2,60,38);
+   c.fillStyle="#d7d0bf";c.fillRect(x+5,y+5,50,2);
+  }
+ });
+ const pavingTex=paintedTexture("#bdb5a4",(c,n)=>{
+  for(let y=0;y<n;y+=28)for(let x=0;x<n;x+=42){
+   const xx=x+((y/28|0)%2)*21;c.fillStyle=["#d5cbb7","#c6bda9","#b5ad9e","#e0d5c0"][(x+y)%4];
+   c.fillRect(xx+1,y+1,39,25);c.strokeStyle="#817a6d";c.lineWidth=1.5;c.strokeRect(xx+1,y+1,39,25);
+   c.strokeStyle="#eee4d1";c.beginPath();c.moveTo(xx+3,y+3);c.lineTo(xx+35,y+3);c.stroke();
+  }
+ });
+ const roofTex=paintedTexture("#a34a36",(c,n)=>{
+  for(let y=0;y<n;y+=22)for(let x=0;x<n;x+=32){
+   const xx=x+((y/22|0)%2)*16;c.fillStyle=["#c65d43","#a94334","#d0714c","#8f392f"][(x+y)%4];
+   c.fillRect(xx+1,y+1,29,19);c.strokeStyle="#71382f";c.lineWidth=2;c.strokeRect(xx+1,y+1,29,19);
+   c.strokeStyle="#e58a65";c.beginPath();c.moveTo(xx+3,y+3);c.lineTo(xx+25,y+3);c.stroke();
+  }
+ });
+ const timberTex=paintedTexture("#68452e",(c,n)=>{
+  for(let i=0;i<30;i++){c.strokeStyle=i%2?"#8d6040":"#4c3022";c.lineWidth=1+(i%3);c.beginPath();c.moveTo(0,i*9);c.bezierCurveTo(80,i*9+4,170,i*9-4,n,i*9);c.stroke()}
+ });
+ const stone=new THREE.MeshStandardMaterial({color:0xd1c7b4,map:stoneTex,roughness:1}),stoneDark=mat(0x827c70),mortar=new THREE.MeshStandardMaterial({color:0xc9c0b0,map:pavingTex,roughness:1});
  const grass=mat(0x537d43),leaf=mat(0x397c48),leafLight=mat(0x6a9b4c);
- const wood=mat(0x68452e),woodLight=mat(0x986440),roof=mat(0x9d4936),roofLight=mat(0xc16a48);
+ const wood=new THREE.MeshStandardMaterial({color:0x8a5a38,map:timberTex,roughness:.92}),woodLight=mat(0xb17a4e),roof=new THREE.MeshStandardMaterial({color:0xffffff,map:roofTex,roughness:.95}),roofLight=mat(0xc16a48);
  const wall=mat(0xe7d1a7),wall2=mat(0xcab58e),glass=new THREE.MeshStandardMaterial({color:0x83c8d9,metalness:.15,roughness:.2,emissive:0x173e4c});
  const gold=new THREE.MeshStandardMaterial({color:0xd4a94e,metalness:.55,roughness:.35});
  const water=new THREE.MeshStandardMaterial({color:0x36bde0,metalness:.25,roughness:.18,transparent:true,opacity:.88});
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(54,42),grass);ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.receiveShadow=true;scene.add(ground);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(54,42),new THREE.MeshStandardMaterial({color:0x739b59,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.receiveShadow=true;scene.add(ground);
  const world=new THREE.Group();scene.add(world);
 
  function box(parent,w,h,d,material,x,y,z,cast=true){
@@ -170,7 +201,7 @@ export function createWorld(canvas){
 
  // cobbled plaza, each stone is a shallow 3D block
  for(let x=-13;x<=13;x+=1.25)for(let z=-8;z<=9;z+=1.25){
-  const tile=new THREE.Mesh(new THREE.BoxGeometry(1.18,.10,1.18),((Math.round(x*2)+Math.round(z*2))%3===0)?stone:mortar);
+  const tile=new THREE.Mesh(new THREE.BoxGeometry(1.18,.10,1.18),new THREE.MeshStandardMaterial({color:0xffffff,map:pavingTex,roughness:1}));
   tile.position.set(x,-.08,z);tile.receiveShadow=true;tile.castShadow=false;world.add(tile);
  }
  // paths from the plaza to the exits
