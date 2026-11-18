@@ -71,7 +71,10 @@ export function createWorld(canvas){
   const g=new THREE.BufferGeometry();
   const a=[-w/2,0,-d/2],b=[w/2,0,-d/2],c=[0,h,-d/2],dd=[-w/2,0,d/2],e=[w/2,0,d/2],f=[0,h,d/2];
   const verts=[...a,...b,...c,...dd,...f,...e, ...a,...c,...f,...dd, ...b,...e,...f,...c, ...a,...dd,...e,...b];
-  g.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));g.computeVertexNormals();
+  g.setAttribute("position",new THREE.Float32BufferAttribute(verts,3));
+  // UV mapping allows the terracotta tile texture to render on custom roof faces.
+  const uv=[];for(let face=0;face<4;face++)uv.push(0,0,1,0,.5,1);
+  g.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();
   const m=new THREE.Mesh(g,material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);
   const side=new THREE.MeshStandardMaterial({color:0x713d32,roughness:.9,side:THREE.DoubleSide});
   const g2=new THREE.BufferGeometry();g2.setAttribute("position",new THREE.Float32BufferAttribute([
@@ -189,6 +192,11 @@ export function createWorld(canvas){
  castleBlock(13.05,0,-10.1,1.8,6.5,1.15,castleLight);
  castleBlock(13.05,0,-5.1,1.8,6.5,1.15,castleLight);
  castleBlock(13.05,6.05,-7.6,1.8,.9,5.8,castleLight);
+ // Sculpted stone arch and keystone above the royal gate.
+ const gateArch=new THREE.Mesh(new THREE.TorusGeometry(2.25,.2,8,20,Math.PI),castleLight);
+ gateArch.rotation.y=Math.PI/2;gateArch.position.set(12.95,4.95,-7.6);gateArch.castShadow=true;world.add(gateArch);
+ const gateKeystone=new THREE.Mesh(new THREE.BoxGeometry(.5,.65,.7),castleLight);
+ gateKeystone.position.set(12.95,7.1,-7.6);gateKeystone.castShadow=true;world.add(gateKeystone);
  // L'ouverture centrale reste réellement praticable pour le personnage.
  // Bannières bleues et or sur les remparts.
  const bannerMat=new THREE.MeshStandardMaterial({color:0x173e78,roughness:.8});
@@ -220,8 +228,12 @@ export function createWorld(canvas){
  }
  const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.65,.9,2.1,8),stone);pedestal.position.set(0,1.7,0);pedestal.castShadow=true;world.add(pedestal);
  const statue=new THREE.Group();statue.position.set(0,2.85,0);world.add(statue);
- const body=new THREE.Mesh(new THREE.ConeGeometry(.58,1.55,7),gold);body.position.y=.75;body.castShadow=true;statue.add(body);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.32,12,10),gold);head.position.y=1.65;statue.add(head);
+ const robe=new THREE.Mesh(new THREE.ConeGeometry(.52,1.5,9),gold);robe.position.y=.75;robe.castShadow=true;statue.add(robe);
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.25,.58,5,8),gold);torso.position.y=1.65;torso.castShadow=true;statue.add(torso);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.25,14,12),gold);head.position.y=2.18;statue.add(head);
+ const armL=new THREE.Mesh(new THREE.CapsuleGeometry(.11,.68,4,7),gold);armL.position.set(-.43,1.72,0);armL.rotation.z=-.72;statue.add(armL);
+ const armR=new THREE.Mesh(new THREE.CapsuleGeometry(.11,.68,4,7),gold);armR.position.set(.43,1.72,0);armR.rotation.z=.72;statue.add(armR);
+ const crown=new THREE.Mesh(new THREE.ConeGeometry(.28,.32,7),gold);crown.position.y=2.48;statue.add(crown);
  const waterJet=new THREE.Mesh(new THREE.CylinderGeometry(.08,.18,1.2,10),water);waterJet.position.set(0,2.8,0);world.add(waterJet);
  const waterStreams=[];
  for(let i=0;i<6;i++){
