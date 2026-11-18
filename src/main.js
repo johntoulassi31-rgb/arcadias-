@@ -35,7 +35,7 @@ document.querySelectorAll(".direction").forEach(b=>{
 });
 window.addEventListener("keydown",e=>{
  const d=keyMap[e.code];if(d){e.preventDefault();press(d);return}
- if(e.code==="KeyE"||e.code==="Enter"){if(!interactButton.hidden)openDialogue()}
+ if(e.code==="KeyE"||e.code==="Enter"){if(!interactButton.hidden)interactButton.click()}
  if(e.code==="Escape"){dialogue.hidden=true;document.querySelector("#game-panel").hidden=true;activeNpc=null;update()}
 });
 window.addEventListener("keyup",e=>{const d=keyMap[e.code];if(d)release(d)});
