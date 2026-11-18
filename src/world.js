@@ -99,12 +99,12 @@ export function createWorld(canvas){
   // Tuiles en relief sur les deux pans : elles suivent la pente du toit.
   const tileMats=[mat(0xa84332),mat(0xc45b3e),mat(0x913b30),mat(0xd27650)];
   for(let side of [-1,1]){
-   for(let row=0;row<6;row++){
-    const xx=side*(w*.43-row*w*.075);
-    const yy=3.35+row*.31;
-    for(let col=0;col<Math.ceil((d+1)/.48);col++){
-     const zz=-d*.48+col*.48;
-     const tile=new THREE.Mesh(new THREE.BoxGeometry(.72,.075,.42),tileMats[(row+col)%tileMats.length]);
+   for(let row=0;row<4;row++){
+    const xx=side*(w*.43-row*w*.105);
+    const yy=3.35+row*.40;
+    for(let col=0;col<Math.ceil((d+1)/.62);col++){
+     const zz=-d*.48+col*.62;
+     const tile=new THREE.Mesh(new THREE.BoxGeometry(.78,.075,.54),tileMats[(row+col)%tileMats.length]);
      tile.position.set(xx,yy,zz);tile.rotation.z=side===-1?.48:-.48;tile.castShadow=true;g.add(tile);
     }
    }
@@ -115,7 +115,7 @@ export function createWorld(canvas){
   }
   // Foundation
   box(g,w+.3,.28,d+.3,stoneDark,0,-.12,0);
-  if(kind==="inn"){
+  if(kind==="inn"||kind==="shop"){
    // striped tavern awning, mounted over the front windows
    for(let i=0;i<7;i++){
     const stripe=new THREE.Mesh(new THREE.BoxGeometry(.62,.12,1.0),mat(i%2?0xf0dfc1:0xa9473c));
