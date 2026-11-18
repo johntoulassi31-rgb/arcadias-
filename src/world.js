@@ -99,7 +99,7 @@ export function createWorld(canvas){
    // sign emblem
    const emblem=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),gold);emblem.position.set(0,2.1,-d/2-.42);g.add(emblem);
   }
-  return {group:g,bounds:{x,z,w:w+1.0,d:d+1.0}};
+  return {group:g,bounds:{x,z,w:w+1.0,d:d+1.0},kind};
  }
  const buildings=[
   house(-10,-7,6,5,wall,"inn"),
@@ -171,11 +171,51 @@ export function createWorld(canvas){
  const mage=character(10,7,0x613b8b,false);
  const merchant=character(-10,-1,0xb17b45,false);
 
+
  const colliders=buildings.map(b=>b.bounds);
+ const interior=new THREE.Group();scene.add(interior);interior.visible=false;
+ const indoorFloor=new THREE.Mesh(new THREE.BoxGeometry(15,.35,12),mat(0x76543a));
+ indoorFloor.position.set(0,-.22,0);indoorFloor.receiveShadow=true;interior.add(indoorFloor);
+ function ibox(x,y,z,sx,sy,sz,material){
+  const o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);o.position.set(x,y+sy/2,z);o.castShadow=true;o.receiveShadow=true;interior.add(o);return o;
+ }
+ const interiorWall=mat(0x9c7650),interiorTrim=mat(0x4b3021);
+ const warmLight=new THREE.PointLight(0xffbd72,85,24);warmLight.position.set(0,7,0);interior.add(warmLight);
+ ibox(0,0,-5.8,15,6,.35,interiorWall);ibox(-7.3,0,0,.35,6,12,interiorWall);ibox(7.3,0,0,.35,6,12,interiorWall);
+ ibox(0,5.8,0,15,.25,12,interiorTrim);
+ for(let x=-6;x<=6;x+=3)ibox(x,0,-5.45,.18,5.6,.2,interiorTrim);
+ ibox(-5,0,-5.35,2.4,2.3,.55,stoneDark);ibox(-5,1.9,-5.35,2.1,.22,.65,stone);
+ const fire=new THREE.PointLight(0xff6b25,5,8);fire.position.set(-5,1.2,-4.6);interior.add(fire);
+ const flame=new THREE.Mesh(new THREE.ConeGeometry(.35,1.05,7),new THREE.MeshBasicMaterial({color:0xff8a27}));flame.position.set(-5,1.15,-4.8);interior.add(flame);
+ ibox(3.8,0,-3.8,5.2,1.25,1.1,woodLight);ibox(3.8,1.25,-3.8,5.3,.12,1.2,gold);
+ for(let x=1.7;x<=5.8;x+=1.35){ibox(x,2.1,-5.45,.85,1.2,.25,wood);ibox(x,2.25,-5.28,.55,.85,.08,woodLight)}
+ for(const p of [[-2,1],[2,2],[-2,3.6]]){
+  const table=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.15,.18,12),woodLight);table.position.set(p[0],1.15,p[1]);table.castShadow=true;interior.add(table);
+  const leg=new THREE.Mesh(new THREE.CylinderGeometry(.16,.22,1.15,8),interiorTrim);leg.position.set(p[0],.55,p[1]);interior.add(leg);
+  for(const side of [-1,1]){const stool=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.16,8),wood);stool.position.set(p[0]+side*1.45,.55,p[1]);interior.add(stool)}
+ }
+ for(const x of [-6,6]){const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.48,.55,1.25,10),woodLight);barrel.position.set(x,.63,3.8);barrel.castShadow=true;interior.add(barrel)}
+ const innkeeper=character(0,0,0xb17b45,false);world.remove(innkeeper);interior.add(innkeeper);innkeeper.position.set(3.7,0,-2.5);innkeeper.rotation.y=Math.PI;
+ let inside=false,returnPosition={x:-10,z:-10};
+ function nearDoor(){return !inside&&Math.hypot(player.position.x-(-10),player.position.z-(-10))<2.1}
+ function enterInterior(){
+  if(inside)return false;
+  returnPosition={x:player.position.x,z:player.position.z};
+  world.visible=false;interior.visible=true;inside=true;player.position.set(0,0,4);player.rotation.y=Math.PI;return true;
+ }
+ function exitInterior(){
+  if(!inside)return false;
+  interior.visible=false;world.visible=true;inside=false;player.position.set(returnPosition.x,0,returnPosition.z+1.5);return true;
+ }
+
  function collides(x,z){
+  if(inside)return x<-6.5||x>6.5||z<-5||z>5;
   if(x<-17||x>17||z<-13||z>15)return true;
   if(Math.hypot(x,z)<3.75)return true;
-  return colliders.some(b=>Math.abs(x-b.x)<b.w*.52&&Math.abs(z-b.z)<b.d*.52);
+  return colliders.some(b=>{
+   const inDoorway=b.kind==="inn"&&Math.abs(x+10)<.85&&z<-9.35&&z>-11.2;
+   return !inDoorway&&Math.abs(x-b.x)<b.w*.52&&Math.abs(z-b.z)<b.d*.52;
+  });
  }
  const clock=new THREE.Clock();
  function animate(){
@@ -192,7 +232,7 @@ export function createWorld(canvas){
   }
   // Follow the adventurer while keeping the same isometric viewing angle.
   const target=new THREE.Vector3(player.position.x,0,player.position.z);
-  camera.position.lerp(new THREE.Vector3(target.x+22,25,target.z+25),.055);
+  camera.position.lerp(inside?new THREE.Vector3(target.x+12,13,target.z+14):new THREE.Vector3(target.x+22,25,target.z+25),.055);
   camera.lookAt(target);
   renderer.render(scene,camera);
  }
@@ -213,6 +253,7 @@ export function createWorld(canvas){
   player.userData.walking=moved;
   return moved;
  }
- function nearAmelie(){return Math.hypot(player.position.x-amelie.position.x,player.position.z-amelie.position.z)<2.2}
- return {move,nearAmelie,player,renderer,scene};
+ function nearAmelie(){return !inside&&Math.hypot(player.position.x-amelie.position.x,player.position.z-amelie.position.z)<2.2}
+ function nearInnkeeper(){return inside&&Math.hypot(player.position.x-innkeeper.position.x,player.position.z-innkeeper.position.z)<2.2}
+ return {move,nearAmelie,nearDoor,nearInnkeeper,enterInterior,exitInterior,get insideBuilding(){return inside},player,renderer,scene};
 }
