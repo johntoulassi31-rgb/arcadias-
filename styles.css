@@ -144,3 +144,17 @@ button{font:inherit}
 
 /* Phaser pixel-art renderer */
 #world3d canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
+
+/* Experimental 16-bit MMORPG skin */
+.player-card,.quest-card,.currency,.top-menu button,.mini-map,#bottom-dock button,#chat-panel,#game-panel,#dialogue{
+ border-radius:0!important;
+ border:2px solid #b99a60!important;
+ background:rgba(20,29,39,.94)!important;
+ box-shadow:3px 3px 0 rgba(7,10,15,.85),inset 0 0 0 1px rgba(255,239,190,.12)!important;
+}
+.player-name,.quest-title,.map-title,#bottom-dock button span,.top-menu button span{
+ font-family:monospace!important;letter-spacing:.02em;
+}
+.avatar-frame{border-radius:0!important;border:2px solid #d7bd7d!important}
+.direction{border-radius:0!important;box-shadow:3px 3px 0 #10151c!important}
+#game-panel,#dialogue{border-radius:0!important}
