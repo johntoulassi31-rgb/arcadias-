@@ -13,14 +13,14 @@ const keyMap = {
 const vectors = {
   up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]
 };
-let lastSent = "";
 
 function currentVector(){
   let x=0,y=0;
   for(const dir of held){x+=vectors[dir][0];y+=vectors[dir][1]}
-  if(x&&y){const n=Math.SQRT1_2;x*=n;y*=n}
+  if(x&&y){x*=Math.SQRT1_2;y*=Math.SQRT1_2}
   return {x,y};
 }
+
 function render(){
   const {x,y}=currentVector();
   const label = x===0&&y===0 ? "Prêt" :
@@ -28,9 +28,15 @@ function render(){
     (x<0?"Gauche":x>0?"Droite":"");
   readout.value=label;
   readout.textContent=label;
-  pad.querySelectorAll(".direction").forEach(b=>b.classList.toggle("pressed",held.has(b.dataset.dir)));
-  window.dispatchEvent(new CustomEvent("arcadias:move",{detail:{x,y,active:!!(x||y)}}));
+  pad.querySelectorAll(".direction").forEach(button=>
+    button.classList.toggle("pressed",held.has(button.dataset.dir))
+  );
+  // API d'entrée pour le moteur de personnage à connecter.
+  window.dispatchEvent(new CustomEvent("arcadias:move",{
+    detail:{x,y,active:!!(x||y),directions:[...held]}
+  }));
 }
+
 function press(dir){held.add(dir);render()}
 function release(dir){held.delete(dir);render()}
 
@@ -38,7 +44,7 @@ pad.querySelectorAll(".direction").forEach(button=>{
   const dir=button.dataset.dir;
   button.addEventListener("pointerdown",event=>{
     event.preventDefault();
-    button.setPointerCapture?.(event.pointerId);
+    try{button.setPointerCapture(event.pointerId)}catch{}
     press(dir);
   });
   const stop=event=>{event.preventDefault();release(dir)};
@@ -47,6 +53,7 @@ pad.querySelectorAll(".direction").forEach(button=>{
   button.addEventListener("lostpointercapture",()=>release(dir));
   button.addEventListener("contextmenu",event=>event.preventDefault());
 });
+
 window.addEventListener("keydown",event=>{
   const dir=keyMap[event.code];
   if(!dir)return;
@@ -58,11 +65,22 @@ window.addEventListener("keyup",event=>{
   if(dir){event.preventDefault();release(dir)}
 });
 window.addEventListener("blur",()=>{held.clear();render()});
-document.addEventListener("visibilitychange",()=>{if(document.hidden){held.clear();render()}});
-
-scene.addEventListener("load",()=>status.classList.add("hidden"));
-scene.addEventListener("error",()=>{
-  status.textContent="Image de référence à ajouter : assets/ardencourt-reference.webp";
-  status.classList.remove("hidden");
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){held.clear();render()}
 });
+
+function sceneReady(){
+  status.classList.add("hidden");
+  window.dispatchEvent(new CustomEvent("arcadias:scene-ready",{
+    detail:{width:scene.naturalWidth,height:scene.naturalHeight}
+  }));
+}
+if(scene.complete&&scene.naturalWidth>0)sceneReady();
+else scene.addEventListener("load",sceneReady,{once:true});
+
+scene.addEventListener("error",()=>{
+  status.textContent="Impossible de charger assets/ardencourt-reference.png";
+  status.classList.remove("hidden");
+},{once:true});
+
 render();
