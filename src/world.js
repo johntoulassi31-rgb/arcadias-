@@ -55,13 +55,25 @@ export function createWorld(canvas){
  const timberTex=paintedTexture("#68452e",(c,n)=>{
   for(let i=0;i<30;i++){c.strokeStyle=i%2?"#8d6040":"#4c3022";c.lineWidth=1+(i%3);c.beginPath();c.moveTo(0,i*9);c.bezierCurveTo(80,i*9+4,170,i*9-4,n,i*9);c.stroke()}
  });
+ const grassTex=paintedTexture("#638b4d",(c,n)=>{
+  for(let i=0;i<900;i++){
+   const x=(i*73)%n,y=(i*137)%n,r=1+(i%4);
+   c.fillStyle=["rgba(28,75,39,.22)","rgba(180,190,91,.22)","rgba(220,205,130,.12)"][i%3];
+   c.beginPath();c.ellipse(x,y,r*1.8,r,((i%7)/7)*Math.PI,0,Math.PI*2);c.fill();
+  }
+  for(let i=0;i<75;i++){
+   const x=(i*47)%n,y=(i*91)%n;c.strokeStyle="rgba(225,226,156,.4)";
+   c.beginPath();c.moveTo(x,y);c.lineTo(x+3,y-6);c.stroke();
+  }
+ });
+ grassTex.repeat.set(12,10);
  const stone=new THREE.MeshStandardMaterial({color:0xd1c7b4,map:stoneTex,roughness:1}),stoneDark=mat(0x827c70),mortar=new THREE.MeshStandardMaterial({color:0xc9c0b0,map:pavingTex,roughness:1});
  const grass=mat(0x537d43),leaf=mat(0x397c48),leafLight=mat(0x6a9b4c);
  const wood=new THREE.MeshStandardMaterial({color:0x8a5a38,map:timberTex,roughness:.92}),woodLight=mat(0xb17a4e),roof=new THREE.MeshStandardMaterial({color:0xffffff,map:roofTex,roughness:.95}),roofLight=mat(0xc16a48);
  const wall=mat(0xe7d1a7),wall2=mat(0xcab58e),glass=new THREE.MeshStandardMaterial({color:0x83c8d9,metalness:.15,roughness:.2,emissive:0x173e4c});
  const gold=new THREE.MeshStandardMaterial({color:0xd4a94e,metalness:.55,roughness:.35});
  const water=new THREE.MeshStandardMaterial({color:0x36bde0,metalness:.25,roughness:.18,transparent:true,opacity:.88});
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(54,42),new THREE.MeshStandardMaterial({color:0x739b59,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.receiveShadow=true;scene.add(ground);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(54,42),new THREE.MeshStandardMaterial({color:0xffffff,map:grassTex,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.16;ground.receiveShadow=true;scene.add(ground);
  const world=new THREE.Group();scene.add(world);
 
  function box(parent,w,h,d,material,x,y,z,cast=true){
@@ -188,6 +200,10 @@ export function createWorld(canvas){
  castleBlock(13.9,0,-2.2,1.3,7.7,9.0,castleMat);
  castleBlock(7.4,0,-17.3,14.2,7.7,1.3,castleMat);
  tower(13.8,-17.1);tower(13.8,2.1);tower(1.3,-17.1);
+ // Continuous battlements along the parapets, not just on the towers.
+ for(let z=-16.0;z<1.2;z+=1.45)castleBlock(13.9,7.75,z,.72,.82,.78,castleLight);
+ for(let x=3.0;x<12.8;x+=1.5)castleBlock(x,7.75,-17.3,.78,.82,.72,castleLight);
+ castleBlock(13.25,7.42,-7.6,1.25,.28,5.6,castleLight);
  // Porte monumentale à arche sombre, encadrée de pierres taillées.
  castleBlock(13.05,0,-10.1,1.8,6.5,1.15,castleLight);
  castleBlock(13.05,0,-5.1,1.8,6.5,1.15,castleLight);
