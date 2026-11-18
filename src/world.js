@@ -4,7 +4,7 @@ const W=48,H=36;
 export function createWorld(){
  let sceneRef=null,inside=false;
  const game=new Phaser.Game({
-  type:Phaser.CANVAS,parent:"world3d",width:window.innerWidth,height:window.innerHeight,
+  type:Phaser.CANVAS,parent:"world3d",width:document.querySelector("#world3d")?.clientWidth||window.innerWidth,height:document.querySelector("#world3d")?.clientHeight||window.innerHeight,
   backgroundColor:"#477d43",pixelArt:true,antialias:false,roundPixels:true,
   scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
   physics:{default:"arcade",arcade:{debug:false}},
@@ -30,10 +30,29 @@ export function createWorld(){
  }
  function create(){
   sceneRef=this;
-  const map=this.make.tilemap({key:"ardencourt"});
-  const tiles=map.addTilesetImage("arcadias","tiles",16,16,0,0);
-  const floor=map.createLayer("Sol",tiles,0,0),deco=map.createLayer("Décor et bâtiments",tiles,0,0);
-  floor.setScale(2);deco.setScale(2);deco.setDepth(1);
+  // Terrain de secours : le monde reste visible même si le navigateur mobile
+  // refuse de décoder l'atlas SVG ou le JSON Tiled.
+  const ground=this.add.graphics().setDepth(-10);
+  ground.fillStyle(0x568c49,1);ground.fillRect(0,0,W*32,H*32);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+   const n=(x*17+y*29)%11;
+   if(n===0||n===5){ground.fillStyle(n===0?0x638f4d:0x4e8044,1);ground.fillRect(x*32+5,y*32+7,3,3);ground.fillRect(x*32+19,y*32+21,2,2);}
+  }
+  ground.fillStyle(0xa88961,1);
+  ground.fillRect(21*32,0,5*32,H*32);
+  ground.fillRect(0,16*32,W*32,4*32);
+  ground.fillStyle(0xb5aa94,1);
+  ground.fillRect(21*32+5,0,3*32,H*32);
+  ground.fillRect(0,16*32+5,W*32,3*32);
+  try{
+   const map=this.make.tilemap({key:"ardencourt"});
+   const tiles=map.addTilesetImage("arcadias","tiles",16,16,0,0);
+   if(tiles){
+    const floor=map.createLayer("Sol",tiles,0,0),deco=map.createLayer("Décor et bâtiments",tiles,0,0);
+    if(floor)floor.setScale(2);
+    if(deco){deco.setScale(2);deco.setDepth(1);}
+   }
+  }catch(error){console.warn("ARCADIAS: carte Tiled indisponible, terrain de secours activé.",error);}
   const cx=24*32,cy=18*32;
   this.add.circle(cx,cy,58,0x6d777b).setDepth(2);
   this.add.circle(cx,cy,47,0x3d9fc0).setDepth(2);
