@@ -55,3 +55,9 @@ button{font:inherit}
  #psp-pad{--unit:clamp(38px,7.5vh,58px)}
  #game-actions{top:36%}
 }
+
+
+#world3d{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;touch-action:none}
+#scene,#hero,#player-ring{display:none!important}
+#collision-hint{z-index:25}
+#psp-pad,#game-actions,#move-state,#interact,#dialogue,#game-panel,#game-toast{z-index:30}
