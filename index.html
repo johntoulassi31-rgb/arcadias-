@@ -23,19 +23,49 @@
       </nav>
       <button id="interact" type="button" hidden>Parler · E</button>
       <output id="move-state" aria-live="polite">Prêt</output>
+      <header id="mmorpg-hud">
+        <section class="player-card">
+          <div class="avatar-frame"><div class="avatar-art"><i></i><b></b></div></div>
+          <div class="player-info"><div class="player-name"><strong>Arcadien</strong><span>Niv. 15</span></div>
+            <div class="stat-line hp"><b>PV</b><span><i style="width:100%"></i></span><em>820 / 820</em></div>
+            <div class="stat-line mp"><b>PM</b><span><i style="width:100%"></i></span><em>220 / 220</em></div>
+            <div class="combat-power">✦ CP&nbsp; 2 840</div>
+          </div>
+        </section>
+        <section class="quest-card"><div class="quest-title">❗ Quête principale</div><strong>Le secret de la librairie</strong><p>Parlez à Amélie à Lyon</p><small>(0 / 1)</small></section>
+        <section class="currency-row">
+          <div class="currency gold-currency">🪙 <b>152 750</b><span>＋</span></div>
+          <div class="currency gem-currency">💎 <b>2 350</b><span>＋</span></div>
+          <div class="currency energy-currency">⚡ <b>120/120</b><span>＋</span></div>
+        </section>
+        <nav class="top-menu">
+          <button data-panel="shop"><b>🛒</b><span>Boutique</span></button>
+          <button data-panel="quests"><b>📜</b><span>Quêtes</span></button>
+          <button data-panel="events"><b>🎁</b><span>Événements</span></button>
+          <button data-panel="rewards"><b>🏆</b><span>Récompenses</span></button>
+          <button data-panel="menu"><b>▦</b><span>Menu</span></button>
+        </nav>
+        <div class="mini-map"><div class="map-title">Ardencourt <span>☀ 12:45</span></div><div class="map-art"><i></i><b></b><em>◆</em></div><small>(128, 64)</small></div>
+      </header>
+      <nav id="bottom-dock" aria-label="Menu du personnage">
+        <button data-panel="character"><b>👤</b><span>Personnage</span></button>
+        <button data-panel="inventory"><b>🎒</b><span>Inventaire</span></button>
+        <button data-panel="quests"><b>📜</b><span>Quêtes</span></button>
+        <button data-panel="skills"><b>✺</b><span>Compétences</span></button>
+        <button data-panel="mount"><b>🐎</b><span>Monture</span></button>
+        <button data-panel="familiars"><b>🐱</b><span>Familiers</span></button>
+        <button data-panel="map"><b>🗺</b><span>Carte</span></button>
+        <button data-panel="mode"><b>🎮</b><span>Mode</span></button>
+        <button id="combat-button"><b>⚔</b><span>Combat</span></button>
+      </nav>
+      <section id="chat-panel"><div class="chat-tabs"><b>Monde</b><span>Guilde</span><span>Groupe</span></div><p><strong>[Monde]</strong> LunaAria : Recherche guilde active !<br><strong>[Monde]</strong> DarkRaven : Échange équipement légendaire contre or.</p><div class="chat-entry"><span>☻</span><input aria-label="Message" placeholder="Saisissez votre message…"><button aria-label="Envoyer">➤</button></div></section>
       <aside id="dialogue" hidden aria-live="polite">
         <div class="dialogue-heading"><strong id="dialogue-name">Amélie</strong><button id="dialogue-close" aria-label="Fermer">×</button></div>
         <p id="dialogue-text"></p>
         <button id="dialogue-next">Continuer</button>
       </aside>
       <div id="game-toast" role="status" aria-live="polite"></div>
-      <div id="game-actions" aria-label="Actions du jeu">
-        <button data-panel="character">Personnage</button>
-        <button data-panel="inventory">Inventaire</button>
-        <button data-panel="quests">Quêtes</button>
-        <button data-panel="map">Carte</button>
-        <button id="save-game">Sauvegarder</button>
-      </div>
+      <button id="save-game" class="save-icon" aria-label="Sauvegarder">💾</button>
       <aside id="game-panel" hidden>
         <button id="panel-close" aria-label="Fermer">×</button>
         <h2 id="panel-title"></h2>
