@@ -17,7 +17,7 @@ const keyMap={ArrowUp:"up",KeyW:"up",ArrowDown:"down",KeyS:"down",ArrowLeft:"lef
 const state={x:.50,y:.47,hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15};
 const walkable=[[.20,.34],[.52,.32],[.69,.35],[.91,.36],[.96,.66],[.88,.82],[.78,.92],[.38,.94],[.25,.82],[.18,.62],[.10,.48]];
 const obstacles=[
- {x:.59,y:.51,rx:.13,ry:.16}, // fontaine
+ {x:.59,y:.50,rx:.09,ry:.13}, // fontaine
  {x:.45,y:.27,rx:.07,ry:.10}, // forge
  {x:.82,y:.34,rx:.045,ry:.09}, // garde
  {x:.26,y:.43,rx:.035,ry:.065}, // marchande
