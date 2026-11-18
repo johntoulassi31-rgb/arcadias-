@@ -9,7 +9,7 @@ const keyMap={ArrowUp:"up",KeyW:"up",ArrowDown:"down",KeyS:"down",ArrowLeft:"lef
 const status=document.querySelector("#move-state"),hint=document.querySelector("#collision-hint");
 const interactButton=document.querySelector("#interact"),dialogue=document.querySelector("#dialogue");
 const dialogueText=document.querySelector("#dialogue-text"),toast=document.querySelector("#game-toast");
-const state={hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15};
+const state={hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15,mount:null,familiar:null,combat:false};
 let activeNpc=null,dialogueStep=0,last=0,toastTimer=0,hintTimer=0;
 const lines=[
  "Bonjour, voyageur. Bienvenue à Ardencourt ! Je suis Amélie, la guide de cette cité.",
@@ -101,12 +101,29 @@ function panel(kind){
  menu:["Menu du jeu",'<p>Profil · Paramètres · Aide · Sauvegarde</p><p>ARCADIAS — Royaume d’Asterion</p>'],
  mode:["Mode de jeu",'<p><strong>Exploration</strong> — déplacements libres dans Ardencourt.</p><p>Le mode combat sera activé lors des rencontres avec des monstres.</p>']
  };
- const [title,body]=views[kind];document.querySelector("#panel-title").textContent=title;document.querySelector("#panel-content").innerHTML=body;document.querySelector("#game-panel").hidden=false;
+ let [title,body]=views[kind];
+ if(kind==="mount") body=state.mount?'<p>Monture équipée : Cheval d’Ardencourt</p><button class="panel-action" data-action="mount-off">Ranger la monture</button>':'<p>Aucune monture équipée.</p><button class="panel-action" data-action="mount-equip">Équiper le cheval d’Ardencourt</button>';
+ if(kind==="familiars") body=state.familiar?'<p>Familier actif : Petit esprit-loup</p><button class="panel-action" data-action="familiar-off">Renvoyer le familier</button>':'<p>Aucun familier invoqué.</p><button class="panel-action" data-action="familiar-summon">Invoquer le petit esprit-loup</button>';
+ if(kind==="combat") body='<p>'+ (state.combat?'Mode combat actif':'Mode exploration') +'</p><button class="panel-action" data-action="combat-toggle">'+(state.combat?'Quitter le combat':'Activer le combat')+'</button><button class="panel-action" data-action="skill-strike">Frappe héroïque</button><button class="panel-action" data-action="skill-magic">Onde arcanique (35 PM)</button>';
+ document.querySelector("#panel-title").textContent=title;document.querySelector("#panel-content").innerHTML=body;document.querySelector("#game-panel").hidden=false;
 }
 document.querySelectorAll("[data-panel]").forEach(b=>b.addEventListener("click",()=>panel(b.dataset.panel)));
 document.querySelector("#panel-close").addEventListener("click",()=>document.querySelector("#game-panel").hidden=true);
 document.querySelector("#save-game").addEventListener("click",save);
-document.querySelector("#combat-button").addEventListener("click",()=>toastMessage("Mode combat : aucune cible à proximité."));
+document.querySelector("#combat-button").addEventListener("click",()=>panel("combat"));
+document.querySelector("#panel-content").addEventListener("click",e=>{
+ const b=e.target.closest("[data-action]");if(!b)return;
+ switch(b.dataset.action){
+  case "mount-equip":state.mount="Cheval d’Ardencourt";toastMessage("Monture équipée.");panel("mount");break;
+  case "mount-off":state.mount=null;toastMessage("Monture rangée.");panel("mount");break;
+  case "familiar-summon":state.familiar="Petit esprit-loup";toastMessage("Ton familier te rejoint.");panel("familiars");break;
+  case "familiar-off":state.familiar=null;toastMessage("Familier renvoyé.");panel("familiars");break;
+  case "combat-toggle":state.combat=!state.combat;toastMessage(state.combat?"Mode combat activé.":"Mode exploration activé.");panel("combat");break;
+  case "skill-strike":toastMessage(state.combat?"Frappe héroïque : aucune cible à portée.":"Active d’abord le mode combat.");break;
+  case "skill-magic":if(!state.combat)toastMessage("Active d’abord le mode combat.");else if(state.mp<35)toastMessage("Mana insuffisant.");else{state.mp-=35;toastMessage("Onde arcanique lancée !");panel("combat");}break;
+ }
+ save();
+});
 function frame(t){
  const dt=Math.min(.05,(t-(last||t))/1000);last=t;
  let x=0,z=0;for(const d of held){x+=vectors[d][0];z+=vectors[d][1]}
