@@ -69,14 +69,35 @@ export function createWorld(canvas){
   const doorKnob=new THREE.Mesh(new THREE.SphereGeometry(.07,10,8),gold);doorKnob.position.set(.25,.95,-d/2-.28);g.add(doorKnob);
   windowAt(g,-w*.29,1.55,-d/2-.12);
   windowAt(g,w*.29,1.55,-d/2-.12);
+  // timber cross-beams, stone steps and flower boxes add readable facade depth
+  box(g,w+.12,.13,.22,wood,0,1.15,-d/2-.09);
+  box(g,w+.12,.13,.22,wood,0,2.45,-d/2-.09);
+  box(g,.12,3.2,.2,wood,-w*.18,0,-d/2-.10);
+  box(g,.12,3.2,.2,wood,w*.18,0,-d/2-.10);
+  box(g,1.35,.18,.48,stone,-.0,0,-d/2-.34);
+  box(g,1.12,.12,.32,stoneDark,0,.18,-d/2-.34);
+  for(const wx of [-w*.29,w*.29]){
+   box(g,.95,.16,.3,wood,wx,1.42,-d/2-.28);
+   for(let f=0;f<3;f++){
+    const bloom=new THREE.Mesh(new THREE.SphereGeometry(.12,7,6),mat([0xd96d83,0xe7c45b,0x9b83cf][f]));
+    bloom.position.set(wx-.28+f*.28,1.67,-d/2-.3);g.add(bloom);
+   }
+  }
   // chimney
   box(g,.55,1.6,.6,stoneDark,w*.27,4.05,d*.18);
   box(g,.7,.18,.72,stone,w*.27,5.55,d*.18);
   // foundation
   box(g,w+.3,.28,d+.3,stoneDark,0,-.12,0);
   if(kind==="inn"){
-   box(g,2.5,.45,.12,woodLight,0,2.45,-d/2-.2);
+   // striped tavern awning, mounted over the front windows
+   for(let i=0;i<7;i++){
+    const stripe=new THREE.Mesh(new THREE.BoxGeometry(.62,.12,1.0),mat(i%2?0xf0dfc1:0xa9473c));
+    stripe.position.set(-1.86+i*.62,2.7,-d/2-.55);stripe.rotation.x=-.12;stripe.castShadow=true;g.add(stripe);
+   }
    const sign=new THREE.Mesh(new THREE.BoxGeometry(1.7,.85,.12),gold);sign.position.set(0,2.1,-d/2-.29);g.add(sign);
+   const signFace=new THREE.Mesh(new THREE.BoxGeometry(1.48,.64,.04),wood);signFace.position.set(0,2.1,-d/2-.37);g.add(signFace);
+   // sign emblem
+   const emblem=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),gold);emblem.position.set(0,2.1,-d/2-.42);g.add(emblem);
   }
   return {group:g,bounds:{x,z,w:w+1.0,d:d+1.0}};
  }
@@ -128,6 +149,16 @@ export function createWorld(canvas){
   const skin=mat(0xe9b995),cloth=mat(color),trim=gold;
   const feet=new THREE.Mesh(new THREE.BoxGeometry(.48,.22,.72),wood);feet.position.set(0,.12,0);g.add(feet);
   const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.82,4,8),cloth);torso.position.y=1.05;torso.castShadow=true;g.add(torso);
+  const limbMat=cloth;
+  const leftArm=new THREE.Group();leftArm.position.set(-.48,1.35,0);g.add(leftArm);
+  const la=new THREE.Mesh(new THREE.CapsuleGeometry(.13,.62,3,6),limbMat);la.rotation.z=-.16;la.position.y=-.27;leftArm.add(la);
+  const rightArm=new THREE.Group();rightArm.position.set(.48,1.35,0);g.add(rightArm);
+  const ra=new THREE.Mesh(new THREE.CapsuleGeometry(.13,.62,3,6),limbMat);ra.rotation.z=.16;ra.position.y=-.27;rightArm.add(ra);
+  const leftLeg=new THREE.Group();leftLeg.position.set(-.2,.52,0);g.add(leftLeg);
+  const ll=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.58,3,6),wood);ll.position.y=-.22;leftLeg.add(ll);
+  const rightLeg=new THREE.Group();rightLeg.position.set(.2,.52,0);g.add(rightLeg);
+  const rl=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.58,3,6),wood);rl.position.y=-.22;rightLeg.add(rl);
+  g.userData.limbs={leftArm,rightArm,leftLeg,rightLeg};
   const head=new THREE.Mesh(new THREE.SphereGeometry(.34,14,12),skin);head.position.y=1.92;head.castShadow=true;g.add(head);
   const hair=new THREE.Mesh(new THREE.SphereGeometry(.36,12,10),mat(isPlayer?0x292334:0x4c3326));hair.position.set(0,2.08,-.03);hair.scale.set(1,.72,1);g.add(hair);
   const cape=new THREE.Mesh(new THREE.ConeGeometry(.55,.95,4),mat(isPlayer?0x6c2940:0x3e5d83));cape.position.set(0,1.0,.42);cape.rotation.x=-.18;cape.castShadow=true;g.add(cape);
@@ -152,6 +183,17 @@ export function createWorld(canvas){
   waterJet.scale.y=.9+Math.sin(t*2.4)*.12;
   statue.rotation.y=Math.sin(t*.2)*.06;
   [amelie,guard,mage,merchant].forEach((p,i)=>{p.position.y=Math.sin(t*1.5+i)*.025;p.rotation.y=Math.sin(t*.5+i)*.04});
+  const moving=!!player.userData.walking;
+  const limbs=player.userData.limbs;
+  if(limbs){
+   const swing=moving?Math.sin(t*13)*.58:Math.sin(t*2)*.035;
+   limbs.leftLeg.rotation.x=swing;limbs.rightLeg.rotation.x=-swing;
+   limbs.leftArm.rotation.x=-swing*.72;limbs.rightArm.rotation.x=swing*.72;
+  }
+  // Follow the adventurer while keeping the same isometric viewing angle.
+  const target=new THREE.Vector3(player.position.x,0,player.position.z);
+  camera.position.lerp(new THREE.Vector3(target.x+22,25,target.z+25),.055);
+  camera.lookAt(target);
   renderer.render(scene,camera);
  }
  renderer.setAnimationLoop(animate);
@@ -168,6 +210,7 @@ export function createWorld(canvas){
   if(!collides(nx,player.position.z)){player.position.x=nx;moved=true}
   if(!collides(player.position.x,nz)){player.position.z=nz;moved=true}
   if(dx||dz)player.rotation.y=Math.atan2(dx,dz);
+  player.userData.walking=moved;
   return moved;
  }
  function nearAmelie(){return Math.hypot(player.position.x-amelie.position.x,player.position.z-amelie.position.z)<2.2}
