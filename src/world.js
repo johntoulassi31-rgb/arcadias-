@@ -86,7 +86,34 @@ export function createWorld(canvas){
   // chimney
   box(g,.55,1.6,.6,stoneDark,w*.27,4.05,d*.18);
   box(g,.7,.18,.72,stone,w*.27,5.55,d*.18);
-  // foundation
+  // Fronton triangulaire et étage en encorbellement, caractéristiques
+  // des maisons à colombages visibles sur la référence.
+  const gableShape=new THREE.Shape();gableShape.moveTo(-w/2,3.02);gableShape.lineTo(w/2,3.02);gableShape.lineTo(0,5.15);gableShape.closePath();
+  const gable=new THREE.Mesh(new THREE.ShapeGeometry(gableShape),wall2);gable.position.set(0,0,-d/2-.13);gable.castShadow=true;gable.receiveShadow=true;g.add(gable);
+  box(g,.2,2.95,.2,wood,-w/2+.12,0,-d/2-.2);
+  box(g,.2,2.95,.2,wood,w/2-.12,0,-d/2-.2);
+  box(g,w+.35,.2,.25,wood,0,3.0,-d/2-.2);
+  const ridge=new THREE.Mesh(new THREE.BoxGeometry(.2,2.25,.2),wood);ridge.position.set(0,4.02,-d/2-.22);ridge.rotation.z=0;g.add(ridge);
+  const gableBeamL=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.17,.2),wood);gableBeamL.position.set(-w*.17,4.05,-d/2-.22);gableBeamL.rotation.z=-.58;g.add(gableBeamL);
+  const gableBeamR=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.17,.2),wood);gableBeamR.position.set(w*.17,4.05,-d/2-.22);gableBeamR.rotation.z=.58;g.add(gableBeamR);
+  // Tuiles en relief sur les deux pans : elles suivent la pente du toit.
+  const tileMats=[mat(0xa84332),mat(0xc45b3e),mat(0x913b30),mat(0xd27650)];
+  for(let side of [-1,1]){
+   for(let row=0;row<6;row++){
+    const xx=side*(w*.43-row*w*.075);
+    const yy=3.35+row*.31;
+    for(let col=0;col<Math.ceil((d+1)/.48);col++){
+     const zz=-d*.48+col*.48;
+     const tile=new THREE.Mesh(new THREE.BoxGeometry(.72,.075,.42),tileMats[(row+col)%tileMats.length]);
+     tile.position.set(xx,yy,zz);tile.rotation.z=side===-1?.48:-.48;tile.castShadow=true;g.add(tile);
+    }
+   }
+  }
+  // Contrevents, poutres diagonales et encadrements visibles sur la façade.
+  for(const xx of [-w*.39,w*.39]){
+   const brace=new THREE.Mesh(new THREE.BoxGeometry(.14,1.25,.18),woodLight);brace.position.set(xx,2.02,-d/2-.22);brace.rotation.z=xx<0?-.72:.72;g.add(brace);
+  }
+  // Foundation
   box(g,w+.3,.28,d+.3,stoneDark,0,-.12,0);
   if(kind==="inn"){
    // striped tavern awning, mounted over the front windows
@@ -101,15 +128,44 @@ export function createWorld(canvas){
   }
   return {group:g,bounds:{x,z,w:w+1.0,d:d+1.0},kind};
  }
+ // Implantation reprise de la maquette : commerces et maisons à gauche,
+ // grande place centrale dégagée, enceinte royale sur le côté droit.
  const buildings=[
-  house(-10,-7,6,5,wall,"inn"),
-  house(0,-9,5,4,wall2),
-  house(10,-7,6,5,wall),
-  house(-12,5,5,4,wall2),
-  house(12,5,5,4,wall),
-  house(-8,11,5,4,wall),
-  house(8,11,5,4,wall2)
+  house(-12,-7,6.4,5.2,wall2,"shop"),
+  house(-13,6.3,6.2,5.3,wall,"inn"),
+  house(-6.8,-9.2,4.8,4.2,wall),
+  house(-7.5,11.5,4.8,4.2,wall2)
  ];
+ // Enceinte fortifiée d'Ardencourt : mur de pierre, tours, créneaux et portail.
+ const castleMat=mat(0x777d83),castleLight=mat(0xa4a7a4),castleDark=mat(0x454c58);
+ function castleBlock(x,y,z,w,h,d,m=castleMat){return box(world,w,h,d,m,x,y,z)}
+ function tower(x,z){
+  castleBlock(x,0,z,3.1,8.2,3.1,castleMat);
+  castleBlock(x,7.8,z,3.55,.55,3.55,castleLight);
+  for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){
+   castleBlock(x+a*1.15,8.35,z+b*1.15,.55,.7,.55,castleLight);
+  }
+  castleBlock(x,2.8,z-1.58,.72,1.7,.12,castleDark);
+  castleBlock(x,5.3,z-1.58,.72,1.7,.12,castleDark);
+ }
+ // Mur visible au fond et sur la droite de la place.
+ castleBlock(13.9,0,-7.5,1.3,7.7,21,castleMat);
+ castleBlock(7.4,0,-17.3,14.2,7.7,1.3,castleMat);
+ tower(13.8,-17.1);tower(13.8,2.1);tower(1.3,-17.1);
+ // Porte monumentale à arche sombre, encadrée de pierres taillées.
+ castleBlock(13.05,0,-7.6,1.8,6.5,5.0,castleLight);
+ castleBlock(13.0,0,-7.6,1.05,5.1,4.2,castleDark);
+ castleBlock(13.0,0,-7.6,.72,4.6,3.6,wood);
+ for(let i=0;i<7;i++)castleBlock(13.0,5.35+i*.22,-7.6,1.9,.18,4.8,castleLight);
+ // Bannières bleues et or sur les remparts.
+ const bannerMat=new THREE.MeshStandardMaterial({color:0x173e78,roughness:.8});
+ function banner(x,z){
+  const g=new THREE.Group();g.position.set(x,4.7,z);world.add(g);
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,2.5,8),gold);pole.position.y=.7;g.add(pole);
+  const cloth=new THREE.Mesh(new THREE.PlaneGeometry(1.15,1.8),bannerMat);cloth.position.set(.58,.65,.03);cloth.rotation.y=-.08;g.add(cloth);
+  const emblem=new THREE.Mesh(new THREE.CircleGeometry(.22,6),gold);emblem.position.set(.58,.72,.055);g.add(emblem);
+ }
+ banner(9.8,-16.45);banner(13.1,-12.2);banner(13.1,-2.2);
 
  // cobbled plaza, each stone is a shallow 3D block
  for(let x=-13;x<=13;x+=1.25)for(let z=-8;z<=9;z+=1.25){
@@ -121,9 +177,14 @@ export function createWorld(canvas){
   box(world,3,.12,1.15,stone,0,-.03,10+i*1.35,false);
  }
  // central fountain: stone basin, water, pedestal and statue
- const basin=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.5,.65,12),stoneDark);basin.position.set(0,.25,0);basin.castShadow=true;basin.receiveShadow=true;world.add(basin);
- const rim=new THREE.Mesh(new THREE.CylinderGeometry(3.45,3.45,.28,12),stone);rim.position.set(0,.67,0);rim.castShadow=true;world.add(rim);
- const pool=new THREE.Mesh(new THREE.CylinderGeometry(3.18,3.18,.12,32),water);pool.position.set(0,.76,0);world.add(pool);
+ const basin=new THREE.Mesh(new THREE.CylinderGeometry(3.55,3.8,.72,16),stoneDark);basin.position.set(0,.25,0);basin.castShadow=true;basin.receiveShadow=true;world.add(basin);
+ const rim=new THREE.Mesh(new THREE.CylinderGeometry(3.82,3.82,.34,16),stone);rim.position.set(0,.72,0);rim.castShadow=true;world.add(rim);
+ const pool=new THREE.Mesh(new THREE.CylinderGeometry(3.5,3.5,.14,40),water);pool.position.set(0,.88,0);world.add(pool);
+ // Anneau de pavés concentriques autour de la fontaine, comme sur la maquette.
+ for(let r=4.25;r<5.5;r+=.48)for(let a=0;a<Math.PI*2;a+=.18){
+  const tile=new THREE.Mesh(new THREE.BoxGeometry(.52,.12,.42),stone);
+  tile.position.set(Math.cos(a)*r,.04,Math.sin(a)*r);tile.rotation.y=-a;tile.receiveShadow=true;world.add(tile);
+ }
  const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.65,.9,2.1,8),stone);pedestal.position.set(0,1.7,0);pedestal.castShadow=true;world.add(pedestal);
  const statue=new THREE.Group();statue.position.set(0,2.85,0);world.add(statue);
  const body=new THREE.Mesh(new THREE.ConeGeometry(.58,1.55,7),gold);body.position.y=.75;body.castShadow=true;statue.add(body);
@@ -165,11 +226,11 @@ export function createWorld(canvas){
   if(isPlayer){const sword=new THREE.Mesh(new THREE.BoxGeometry(.10,1.05,.12),mat(0xd7e3ec,.25));sword.position.set(.62,1.12,-.12);sword.rotation.z=-.28;g.add(sword)}
   return g;
  }
- const player=character(0,5,0x344c7d,true);
- const amelie=character(3.9,-1.6,0x4b79a5,false);
- const guard=character(12,-2.5,0x6b7182,false);
- const mage=character(10,7,0x613b8b,false);
- const merchant=character(-10,-1,0xb17b45,false);
+ const player=character(-1.8,3.8,0x344c7d,true);
+ const amelie=character(4.1,1.4,0x4b79a5,false);
+ const guard=character(11.6,-5.4,0x6b7182,false);
+ const mage=character(10.8,7.0,0x613b8b,false);
+ const merchant=character(-10.8,-2.2,0xb17b45,false);
 
 
  const colliders=buildings.map(b=>b.bounds);
