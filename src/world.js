@@ -12,7 +12,7 @@ export function createWorld(canvas){
  const scene=new THREE.Scene();
  scene.background=new THREE.Color(0x9dc4d0);
  scene.fog=new THREE.Fog(0x9dc4d0,34,68);
- const camera=new THREE.PerspectiveCamera(34,1,.1,120);
+ const camera=new THREE.OrthographicCamera(-18,18,18,-18,.1,150);
  camera.position.set(22,25,25);
  camera.lookAt(0,0,0);
 
@@ -323,7 +323,10 @@ export function createWorld(canvas){
  renderer.setAnimationLoop(animate);
  function resize(){
   const w=canvas.clientWidth||window.innerWidth,h=canvas.clientHeight||window.innerHeight;
-  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  const aspect=w/h,viewHeight=30;
+  camera.left=-viewHeight*aspect/2;camera.right=viewHeight*aspect/2;
+  camera.top=viewHeight/2;camera.bottom=-viewHeight/2;
+  camera.updateProjectionMatrix();renderer.setSize(w,h,false);
  }
  window.addEventListener("resize",resize);resize();
  function move(dx,dz,dt){
