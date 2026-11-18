@@ -76,7 +76,7 @@ function buildCharacterLayers(){
  const bg=document.createElement("canvas");bg.width=w;bg.height=h;
  const b=bg.getContext("2d");b.drawImage(image,0,0);
  // Reconstruction du pavage à l'endroit où le héros était imprimé dans la maquette.
- const sx=Math.round(w*.345),sy=Math.round(h*.385),sw=Math.round(w*.112),sh=Math.round(h*.195);
+ const sx=Math.round(w*.345),sy=Math.round(h*.385),sw=Math.round(w*.100),sh=Math.round(h*.195);
  const dx=Math.round(w*.442),dy=Math.round(h*.36),dw=Math.round(w*.112),dh=Math.round(h*.195);
  const patch=document.createElement("canvas");patch.width=sw;patch.height=sh;
  patch.getContext("2d").drawImage(image,sx,sy,sw,sh,0,0,sw,sh);
