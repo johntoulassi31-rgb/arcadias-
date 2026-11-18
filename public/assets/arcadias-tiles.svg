@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="64" viewBox="0 0 128 64" shape-rendering="crispEdges">
+<rect width="128" height="64" fill="#477d43"/>
+<!-- 0 grass --> <rect x="0" y="0" width="16" height="16" fill="#568c49"/><path d="M2 3h2v2H2M10 10h2v2h-2M6 13h2v2H6" fill="#9bb85b"/>
+<!-- 1 grass variant --> <rect x="16" y="0" width="16" height="16" fill="#638f4d"/><path d="M19 4h2v2h-2M27 11h2v2h-2" fill="#b2bd69"/>
+<!-- 2 dirt path --> <rect x="32" y="0" width="16" height="16" fill="#a88961"/><path d="M33 2h5v2h-5M41 9h4v2h-4M35 13h3v1h-3" fill="#c5a77a"/>
+<!-- 3 paving --> <rect x="48" y="0" width="16" height="16" fill="#a9a293"/><path d="M48 0h16v1H48M48 8h16v1H48M56 1v7h1V1M51 9v7h1V9" fill="#77766d"/>
+<!-- 4 water --> <rect x="64" y="0" width="16" height="16" fill="#378fb4"/><path d="M66 4h6v1h-6M72 11h6v1h-6" fill="none" stroke="#8bd7e8"/>
+<!-- 5 stone wall --> <rect x="80" y="0" width="16" height="16" fill="#8b8a82"/><path d="M80 7h16M87 0v7M83 8v8M80 1h16" stroke="#5e605e" stroke-width="1"/>
+<!-- 6 red roof --> <rect x="96" y="0" width="16" height="16" fill="#a84435"/><path d="M96 4h16M96 10h16M100 0v4m8 0v6m-8 0v6" stroke="#e07a59" stroke-width="1"/>
+<!-- 7 timber wall --> <rect x="112" y="0" width="16" height="16" fill="#dfc18d"/><path d="M112 2h16M112 14h16M114 0v16m12-16v16M112 2l16 12m0-12l-16 12" stroke="#70452e" stroke-width="2"/>
+<!-- 8 tree --> <rect x="0" y="16" width="16" height="16" fill="#316d3d"/><circle cx="8" cy="23" r="6" fill="#4e9b4e"/><circle cx="5" cy="20" r="3" fill="#82b85a"/><rect x="7" y="27" width="3" height="5" fill="#765035"/>
+<!-- 9 flowers --> <rect x="16" y="16" width="16" height="16" fill="#568c49"/><circle cx="5" cy="5" r="2" fill="#f7d96a"/><circle cx="11" cy="11" r="2" fill="#eaa3d3"/><circle cx="5" cy="5" r="1" fill="#fff" transform="translate(16 16)"/>
+<!-- 10 wood floor --> <rect x="32" y="16" width="16" height="16" fill="#9a7049"/><path d="M32 20h16M32 26h16M38 16v4m5 6v6" stroke="#68462e"/>
+<!-- 11 fence --> <rect x="48" y="16" width="16" height="16" fill="#568c49"/><path d="M51 16v16m9-16v16M48 21h16M48 28h16" stroke="#805334" stroke-width="2"/>
+<!-- 12 dark roof --> <rect x="64" y="16" width="16" height="16" fill="#81372e"/><path d="M64 21h16M64 27h16" stroke="#bd6348"/>
+<!-- 13 cobble --> <rect x="80" y="16" width="16" height="16" fill="#b5aa94"/><path d="M80 22h16M88 16v6m-5 0v10m8-4h5" stroke="#827b70"/>
+<!-- 14 sand --> <rect x="96" y="16" width="16" height="16" fill="#c5ad7b"/><path d="M98 20h2m7 6h3m-8 4h2" stroke="#e6d19e"/>
+<!-- 15 stone trim --> <rect x="112" y="16" width="16" height="16" fill="#6f706e"/><path d="M112 20h16m-16 8h16m4-12v16" stroke="#b5b2a7"/>
+<!-- filler atlas --> <rect x="0" y="32" width="128" height="32" fill="#477d43"/>
+<rect x="0" y="32" width="16" height="16" fill="#78553b"/><path d="M0 36h16M8 32v16" stroke="#b48658" stroke-width="2"/>
+<rect x="16" y="32" width="16" height="16" fill="#e4d0a8"/><path d="M16 34h16M16 46h16" stroke="#70452e" stroke-width="2"/>
+<rect x="32" y="32" width="16" height="16" fill="#b94f3d"/><path d="M32 36h16M32 42h16" stroke="#e88b68"/>
+<rect x="48" y="32" width="16" height="16" fill="#d8bd8c"/><path d="M48 32l16 16m0-16L48 48" stroke="#70452e" stroke-width="2"/>
+<rect x="64" y="32" width="16" height="16" fill="#6b4c34"/><path d="M67 32v16m10-16v16" stroke="#b27b4e" stroke-width="2"/>
+<rect x="80" y="32" width="16" height="16" fill="#d8e7e8"/><path d="M80 32h16v16H80z" fill="none" stroke="#70452e" stroke-width="2"/>
+<rect x="96" y="32" width="16" height="16" fill="#d6b84d"/><path d="M104 34v12m-6-6h12" stroke="#fff0a6" stroke-width="2"/>
+<rect x="112" y="32" width="16" height="16" fill="#477d43"/><circle cx="120" cy="40" r="6" fill="#f2c85b"/>
+<rect x="0" y="48" width="16" height="16" fill="#477d43"/><rect x="16" y="48" width="16" height="16" fill="#477d43"/><rect x="32" y="48" width="16" height="16" fill="#477d43"/><rect x="48" y="48" width="16" height="16" fill="#477d43"/><rect x="64" y="48" width="16" height="16" fill="#477d43"/><rect x="80" y="48" width="16" height="16" fill="#477d43"/><rect x="96" y="48" width="16" height="16" fill="#477d43"/><rect x="112" y="48" width="16" height="16" fill="#477d43"/>
+</svg>
