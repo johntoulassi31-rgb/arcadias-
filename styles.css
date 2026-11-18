@@ -61,3 +61,7 @@ button{font:inherit}
 #scene,#hero,#player-ring{display:none!important}
 #collision-hint{z-index:25}
 #psp-pad,#game-actions,#move-state,#interact,#dialogue,#game-panel,#game-toast{z-index:30}
+
+/* Robust touch controls: prevent browser gestures from hijacking the virtual D-pad. */
+.direction,#psp-pad{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+.direction{ -webkit-tap-highlight-color:transparent; }
