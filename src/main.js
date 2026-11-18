@@ -14,7 +14,7 @@ const toast=document.querySelector("#game-toast");
 const held=new Set();
 const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const keyMap={ArrowUp:"up",KeyW:"up",ArrowDown:"down",KeyS:"down",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right"};
-const state={x:.50,y:.47,hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15};
+const state={x:.50,y:.55,hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15};
 const walkable=[[.20,.34],[.52,.32],[.69,.35],[.91,.36],[.96,.66],[.88,.82],[.78,.92],[.38,.94],[.25,.82],[.18,.62],[.10,.48]];
 const obstacles=[
  {x:.59,y:.50,rx:.09,ry:.13}, // fontaine
@@ -54,7 +54,7 @@ function showBlocked(){
 function updateVisual(dx=0,dy=0){
  hero.style.left=(state.x*100)+"%";hero.style.top=(state.y*100)+"%";
  hero.style.zIndex=String(7+Math.round(state.y*100));
- ring.style.left=(state.x*100)+"%";ring.style.top=((state.y+.018)*100)+"%";
+ ring.style.left=(state.x*100)+"%";ring.style.top=((state.y-.012)*100)+"%";
  hero.classList.toggle("walking",!!(dx||dy));
  hero.classList.toggle("facing-left",dx<-.01);
  hero.classList.toggle("facing-up",dy<-.01);
@@ -84,7 +84,7 @@ function buildCharacterLayers(){
  // Le vrai héros est découpé depuis la maquette, et non remplacé par un personnage générique.
  const crop={x:w*.442,y:h*.36,w:w*.112,h:h*.203};
  const c=sprite.getContext("2d");c.clearRect(0,0,180,190);
- c.save();c.scale(180/crop.w,190/crop.h);
+ c.save();
  c.beginPath();
  const poly=[[82,8],[101,15],[113,35],[116,57],[132,82],[158,113],[154,129],[137,126],[122,111],[120,137],[140,160],[130,174],[106,162],[92,143],[82,169],[64,180],[48,172],[58,146],[58,122],[34,111],[12,99],[16,81],[43,61],[55,34],[68,17]];
  c.moveTo(poly[0][0],poly[0][1]);for(const p of poly.slice(1))c.lineTo(p[0],p[1]);c.closePath();c.clip();
