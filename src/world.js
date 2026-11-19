@@ -274,7 +274,6 @@ export function createWorld() {
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
       preload:function loadArtwork(){
-        this.load.image("ardencourt-art","./assets/ardencourt-reference.webp");
         this.load.svg("frontier-art","./assets/asterion-frontier.svg",{width:2560,height:1920});
       },
       create:function initializeScene(){
@@ -297,13 +296,61 @@ export function createWorld() {
   });
 
   function drawGround(scene) {
-    // Grande illustration isométrique de la capitale, utilisée comme décor du monde.
-    scene.add.rectangle(1280,960,2560,1920,0xb5aa91).setDepth(-21);
-    const artwork=scene.add.image(0,0,"ardencourt-art")
-      .setOrigin(0,0).setDisplaySize(2560,1707).setDepth(-20);
-    artwork.setData("region","Ardencourt");
-    const frontier=scene.add.image(2560,0,"frontier-art")
-      .setOrigin(0,0).setDisplaySize(2560,1920).setDepth(-19);
+    // Ardencourt : sol construit dans Phaser, et non une image de fond.
+    const g=scene.add.graphics().setDepth(-100);
+    g.fillStyle(0x527b45,1);g.fillRect(0,0,2560,1920);
+    for(let y=24;y<1900;y+=64)for(let x=24;x<2540;x+=64){
+      const v=((x*13+y*7)%5);
+      g.fillStyle([0x5b8548,0x628b4b,0x4c7540,0x6b914f,0x527d43][v],0.34);
+      g.fillEllipse(x+(v*5),y+(v*3),18,8);
+    }
+    // Place pavée avec dalles distinctes et joints visibles.
+    g.fillStyle(0xb9ad96,1);g.fillRoundedRect(500,430,1560,1080,190);
+    g.fillStyle(0xcfc2a8,1);g.fillRoundedRect(535,445,1490,1045,178);
+    for(let y=470;y<1470;y+=40)for(let x=550+(Math.floor(y/40)%2)*20;x<2010;x+=40){
+      const shade=((x*3+y*5)%7);
+      g.fillStyle([0xb5a88f,0xc6b99f,0xd4c7ae,0xafa38d,0xc1b49b,0xd0c2a7,0xb9ad96][shade],0.88);
+      g.fillRoundedRect(x,y,37,37,3);
+      g.lineStyle(1,0x8f826e,0.45);g.strokeRoundedRect(x,y,37,37,3);
+      g.lineStyle(1,0xf0e5ce,0.55);g.lineBetween(x+3,y+3,x+31,y+3);
+    }
+    // Grandes allées nord-sud et est-ouest.
+    g.fillStyle(0xd1c3a8,1);g.fillRect(1170,0,220,1920);g.fillRect(0,885,2560,190);
+    for(let y=0;y<1920;y+=40)for(let x=1170;x<1390;x+=40){g.lineStyle(1,0x968a76,0.45);g.strokeRect(x,y,38,38);}
+    for(let x=0;x<2560;x+=40)for(let y=885;y<1075;y+=40){g.lineStyle(1,0x968a76,0.45);g.strokeRect(x,y,38,38);}
+    // Jardins clos et parterres fleuris.
+    const bed=(x,y,w,h)=>{
+      g.fillStyle(0x766e5c,1);g.fillRoundedRect(x-7,y-7,w+14,h+14,18);
+      g.fillStyle(0xd0bea0,1);g.fillRoundedRect(x-3,y-3,w+6,h+6,15);
+      g.fillStyle(0x355d35,1);g.fillRoundedRect(x,y,w,h,12);
+      for(let i=0;i<Math.floor(w/18);i++){
+        const px=x+9+i*18,py=y+((i%2)*7)+8;
+        g.fillStyle([0xe7a5bd,0xf0d8a1,0xb5a6df,0xf4eee0][i%4]);g.fillCircle(px,py,5);
+        g.fillStyle(0x6f9c4e);g.fillCircle(px+5,py+7,4);
+      }
+    };
+    bed(600,520,300,72);bed(1660,520,300,72);bed(600,1320,300,72);bed(1660,1320,300,72);
+    bed(520,700,70,260);bed(1970,700,70,260);
+    // Fontaine détaillée au centre de la place.
+    const fx=1280,fy=960;
+    g.fillStyle(0x777064,1);g.fillEllipse(fx,fy+18,250,126);
+    g.fillStyle(0xddd0b8,1);g.fillEllipse(fx,fy,242,120);
+    g.lineStyle(8,0x8e887c,1);g.strokeEllipse(fx,fy,242,120);
+    g.fillStyle(0x4f9bb0,1);g.fillEllipse(fx,fy-4,205,91);
+    g.lineStyle(4,0xd5e8df,0.85);g.strokeEllipse(fx,fy-4,205,91);
+    g.fillStyle(0x8ed9e5,0.7);g.fillEllipse(fx-35,fy-22,68,20);
+    g.fillStyle(0x6dbbd0,0.9);g.fillEllipse(fx+38,fy+17,58,18);
+    g.fillStyle(0xc9b991,1);g.fillRect(fx-18,fy-58,36,50);
+    g.fillStyle(0x9c895e,1);g.fillRect(fx-28,fy-66,56,10);
+    g.fillStyle(0xead8a9,1);g.fillCircle(fx,fy-78,14);
+    g.fillStyle(0x72d8ec,1);g.fillCircle(fx,fy-80,7);
+    for(let i=0;i<8;i++){
+      const a=i*Math.PI/4,px=fx+Math.cos(a)*93,py=fy+Math.sin(a)*42;
+      g.lineStyle(3,0x9eeaff,0.8);g.lineBetween(fx,fy-28,px,py-8);
+      g.fillStyle(0xe4faff,0.9);g.fillCircle(px,py-8,4);
+    }
+    g.lineStyle(8,0x786c58,1);g.strokeRoundedRect(490,420,1580,1100,195);
+    const frontier=scene.add.image(2560,0,"frontier-art").setOrigin(0,0).setDisplaySize(2560,1920).setDepth(-19);
     frontier.setData("region","Frontières d’Asterion");
   }
 
@@ -422,12 +469,19 @@ export function createWorld() {
     sceneRef=this;
     this.physics.world.setBounds(0,0,WORLD_W,WORLD_H);
     drawGround(this);
-
-    // The detailed illustrated city is loaded as a single optimized SVG backdrop.
-
-    // Les bâtiments et jardins sont intégrés dans l'illustration détaillée.
-    // Les portes restent interactives et les collisions sont gérées séparément.
-    tavernDoor={x:2315,y:585};
+    // Maisons autonomes : chaque façade possède un corps de collision dédié.
+    makeHouseTexture(this,"house-0",0);makeHouseTexture(this,"house-1",1);makeHouseTexture(this,"house-2",2);
+    makeTreeTexture(this,"tree-0",false);makeTreeTexture(this,"tree-1",true);
+    addHouse(this,68,13,"house-0",0,true);
+    addHouse(this,8,13,"house-1",1,false);
+    addHouse(this,68,43,"house-2",2,false);
+    addHouse(this,8,43,"house-0",0,false);
+    const treePositions=[[18,8],[27,8],[51,8],[60,8],[18,49],[27,49],[51,49],[60,49],[4,25],[4,35],[75,25],[75,35],[18,18],[60,18],[18,39],[60,39]];
+    treePositions.forEach(([tx,ty],i)=>{
+      const x=tx*TILE+16,y=ty*TILE+16;
+      this.add.image(x,y,"tree-"+(i%5===0?1:0)).setOrigin(.5,.9).setDepth(y+40).setScale(1.15+(i%3)*.12);
+    });
+    tavernDoor={x:68*TILE+101,y:13*TILE+162};
 
     const cx=24*TILE+16,cy=18*TILE+16;
     const makeNpc=(key,x,y,tunic,hair,accent,cloak=false)=>{
