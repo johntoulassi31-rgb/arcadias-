@@ -48,6 +48,11 @@ document.querySelectorAll(".direction").forEach(b=>{
   try{b.setPointerCapture(e.pointerId)}catch{}
   syncHeld();
  });
+ const releasePointer=e=>{
+  if(activePointers.delete(e.pointerId))syncHeld();
+ };
+ b.addEventListener("pointerup",releasePointer);
+ b.addEventListener("pointercancel",releasePointer);
  b.addEventListener("contextmenu",e=>e.preventDefault());
  b.addEventListener("lostpointercapture",e=>{
   if(activePointers.delete(e.pointerId))syncHeld();
@@ -60,7 +65,15 @@ window.addEventListener("keydown",e=>{
  if(e.code==="KeyE"||e.code==="Enter"){if(!interactButton.hidden)interactButton.click()}
  if(e.code==="Escape"){dialogue.hidden=true;document.querySelector("#game-panel").hidden=true;activeNpc=null;releaseAll();update()}
 });
-window.addEventListener("keyup",e=>{const d=keyMap[e.code];if(d&&keyboardHeld.delete(d))syncHeld()});
+const releaseKey=e=>{
+ const d=keyMap[e.code];
+ if(d&&keyboardHeld.delete(d))syncHeld();
+};
+window.addEventListener("keyup",releaseKey,true);
+document.addEventListener("keyup",releaseKey,true);
+window.addEventListener("pointerup",e=>{if(activePointers.delete(e.pointerId))syncHeld()},true);
+window.addEventListener("pointercancel",e=>{if(activePointers.delete(e.pointerId))syncHeld()},true);
+document.addEventListener("touchend",()=>{if(activePointers.size){activePointers.clear();syncHeld()}},{passive:true});
 window.addEventListener("blur",releaseAll);
 window.addEventListener("pagehide",releaseAll);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)releaseAll()});
