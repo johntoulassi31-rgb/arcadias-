@@ -602,7 +602,7 @@ export function createWorld() {
       roamers.forEach(agent=>{
         const a=agent.sprite;
         if(!a.active||!a.body)return;
-        if(!agent.goal||time>=agent.next)chooseGoal(agent);
+        if(!agent.goal&&time>=agent.next)chooseGoal(agent);
         const dx=agent.goal.x-a.x,dy=agent.goal.y-a.y;
         const distance=Math.hypot(dx,dy);
         if(distance<9){
