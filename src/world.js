@@ -525,8 +525,13 @@ export function createWorld() {
       sprite.body.setSize(18,12).setOffset(15,45);
     });
 
-    // Buildings block the player; NPCs remain approachable.
-    this.physics.add.collider(player,houseBodies);
+    // Phaser Arcade Collider accepte des GameObjects ou des groupes,
+    // pas un tableau JavaScript brut : enregistrer chaque façade séparément.
+    houseBodies.forEach(body=>{
+      this.physics.add.collider(player,body);
+      this.physics.add.collider(npcGroup,body);
+    });
+    // Les habitants restent solides pour éviter que les sprites se traversent.
     this.physics.add.collider(player,npcGroup);
 
     const obstacles=this.physics.add.staticGroup();
@@ -564,7 +569,6 @@ export function createWorld() {
     addObstacle(frontierX+2090,1510,760,440);
     this.physics.add.collider(player,obstacles);
     // PNJ respectent les bâtiments, les limites et les obstacles du village.
-    this.physics.add.collider(npcGroup,houseBodies);
     this.physics.add.collider(npcGroup,obstacles);
     this.physics.add.collider(npcGroup,npcGroup);
 
