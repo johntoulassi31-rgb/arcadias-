@@ -57,9 +57,9 @@ function update(){
  const label=held.size?[...held].map(d=>labels[d]).join(" + "):"Prêt";
  if(status){status.value=label;status.textContent=label;}
  document.querySelectorAll(".direction").forEach(b=>b.classList.toggle("pressed",held.has(b.dataset.dir)));
- const atDoor=game.nearDoor(),atGuide=game.nearAmelie(),atInnkeeper=game.nearInnkeeper();
- interactButton.hidden=!(atDoor||atGuide||atInnkeeper)||!dialogue.hidden;
- interactButton.textContent=atDoor?(game.insideBuilding?"Sortir":"Entrer dans l auberge"):atInnkeeper?"Parler au tavernier":"Parler · E";
+ const atDoor=game.nearDoor(),atGuide=game.nearAmelie(),atGuard=game.nearGuard(),atMage=game.nearMage(),atMerchant=game.nearMerchant(),atInnkeeper=game.nearInnkeeper();
+ interactButton.hidden=!(atDoor||atGuide||atGuard||atMage||atMerchant||atInnkeeper)||!dialogue.hidden;
+ interactButton.textContent=atDoor?(game.insideBuilding?"Sortir":"Entrer dans l’auberge"):atInnkeeper?"Parler au tavernier":atGuide?"Parler à Amélie":atGuard?"Parler au garde":atMage?"Parler à Morgane":"Parler à Élise";
 }
 function releaseAll(){
  keyboardHeld.clear();activePointers.clear();syncHeld();
@@ -108,22 +108,32 @@ interactButton.addEventListener("click",()=>{
   else{game.enterInterior();toastMessage("Auberge du Dragon d’Or");}
   releaseAll();update();return;
  }
- if(game.nearAmelie()||game.nearInnkeeper())openDialogue();
+ if(game.insideBuilding){openDialogue("innkeeper");return;}
+ if(game.nearAmelie())openDialogue("amelie");
+ else if(game.nearGuard())openDialogue("guard");
+ else if(game.nearMage())openDialogue("mage");
+ else if(game.nearMerchant())openDialogue("merchant");
 });
-function openDialogue(){
+function openDialogue(kind="amelie"){
  releaseAll();game.pauseNpcMovement(true);
- activeNpc=true;dialogueStep=0;
- const inside=game.insideBuilding;
- const speech=inside?["Bienvenue au Dragon d Or ! Installe-toi près du feu, voyageur.","Les routes vers Lyon sont longues. Une vieille librairie y cacherait un secret.","Tu peux consulter le tableau des contrats près du comptoir."]:lines;
- document.querySelector("#dialogue-name").textContent=inside?"Tavernier":"Amélie";
- dialogueText.textContent=speech[0];dialogue.hidden=false;interactButton.hidden=true;
- dialogue.dataset.speech=JSON.stringify(speech);
+ activeNpc=kind;dialogueStep=0;
+ const conversations={
+  amelie:{name:"Amélie",speech:lines},
+  guard:{name:"Garde royal",speech:["Halte, voyageur. Ardencourt est sous la protection de la couronne.","La grande porte à l’est mène aux territoires sauvages. Ne pars pas sans provisions."]},
+  mage:{name:"Morgane",speech:["Les pierres anciennes réagissent à la magie qui dort sous Asterion.","Si tu trouves un cristal bleu dans les ruines, ne le touche pas sans précaution."]},
+  merchant:{name:"Élise la marchande",speech:["Bienvenue à mon étal ! Les routes sont dangereuses, mieux vaut voyager équipé.","Je prépare des potions et des provisions. La boutique complète ouvrira bientôt."]},
+  innkeeper:{name:"Tavernier",speech:["Bienvenue au Dragon d’Or ! Installe-toi près du feu, voyageur.","Les routes vers Lyon sont longues. Une vieille librairie y cacherait un secret.","Tu peux consulter le tableau des contrats près du comptoir."]}
+ };
+ const convo=conversations[kind]||conversations.amelie;
+ document.querySelector("#dialogue-name").textContent=convo.name;
+ dialogueText.textContent=convo.speech[0];dialogue.hidden=false;interactButton.hidden=true;
+ dialogue.dataset.speech=JSON.stringify(convo.speech);
 }
 document.querySelector("#dialogue-next").addEventListener("click",()=>{
  if(!activeNpc)return;dialogueStep++;
  const speech=JSON.parse(dialogue.dataset.speech||"[]");
  if(dialogueStep>=speech.length){
-  if(!state.quest){state.quest=1;toastMessage("Quête ajoutée : Le secret de la librairie");save()}
+  if(activeNpc==="amelie"&&!state.quest){state.quest=1;toastMessage("Quête ajoutée : Le secret de la librairie");save()}
   dialogue.hidden=true;activeNpc=null;game.pauseNpcMovement(false);releaseAll();update();return;
  }
  dialogueText.textContent=speech[dialogueStep];
