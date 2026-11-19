@@ -58,7 +58,8 @@
         <button data-panel="mode"><b>🎮</b><span>Mode</span></button>
         <button id="combat-button"><b>⚔</b><span>Combat</span></button>
       </nav>
-      <section id="chat-panel"><div class="chat-tabs"><b>Monde</b><span>Guilde</span><span>Groupe</span></div><p><strong>[Monde]</strong> LunaAria : Recherche guilde active !<br><strong>[Monde]</strong> DarkRaven : Échange équipement légendaire contre or.</p><div class="chat-entry"><span>☻</span><input aria-label="Message" placeholder="Saisissez votre message…"><button aria-label="Envoyer">➤</button></div></section>
+      <button id="chat-toggle" type="button" aria-label="Ouvrir la messagerie" aria-expanded="false">💬<span>Messagerie</span></button>
+      <section id="chat-panel" aria-hidden="true"><div class="chat-tabs"><b>Monde</b><span>Guilde</span><span>Groupe</span></div><p><strong>[Monde]</strong> LunaAria : Recherche guilde active !<br><strong>[Monde]</strong> DarkRaven : Échange équipement légendaire contre or.</p><div class="chat-entry"><span>☻</span><input aria-label="Message" placeholder="Saisissez votre message…"><button aria-label="Envoyer">➤</button></div></section>
       <aside id="dialogue" hidden aria-live="polite">
         <div class="dialogue-heading"><strong id="dialogue-name">Amélie</strong><button id="dialogue-close" aria-label="Fermer">×</button></div>
         <p id="dialogue-text"></p>
