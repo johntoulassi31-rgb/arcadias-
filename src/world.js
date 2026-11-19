@@ -273,6 +273,9 @@ export function createWorld() {
     scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
+      preload:function loadArtwork(){
+        this.load.svg("ardencourt-art","./assets/ardencourt-world.svg",{width:WORLD_W,height:WORLD_H});
+      },
       create:function initializeScene(){
         try{create.call(this);}
         catch(error){
@@ -293,97 +296,10 @@ export function createWorld() {
   });
 
   function drawGround(scene) {
-    const g=scene.add.graphics().setDepth(-20);
-    g.fillStyle(PALETTE.grass,1);
-    g.fillRect(0,0,WORLD_W,WORLD_H);
-
-    // New connected regions beyond Ardencourt.
-    g.fillStyle(0x365d3d,1);
-    g.fillRect(48*TILE,0,32*TILE,34*TILE); // Forêt des Murmures
-    g.fillStyle(0x6c8050,1);
-    g.fillRect(48*TILE,34*TILE,32*TILE,26*TILE); // Vallée d'Émeraude
-    g.fillStyle(0x77705e,1);
-    g.fillRect(54*TILE,2*TILE,21*TILE,12*TILE); // Ruines d'Aster
-    g.fillStyle(0x526b43,1);
-    g.fillRect(50*TILE,35*TILE,28*TILE,23*TILE);
-
-    // Subtle grass colour noise; repeated with a deterministic pattern.
-    for(let y=0;y<MAP_H;y++){
-      for(let x=0;x<MAP_W;x++){
-        const seed=(x*37+y*71)%17;
-        if(seed===0||seed===5||seed===11){
-          g.fillStyle(seed===0?PALETTE.grassLight:PALETTE.grassDark,0.7);
-          g.fillRect(x*TILE+5+(seed%7),y*TILE+7,5,3);
-          g.fillRect(x*TILE+20,y*TILE+19+(seed%5),3,2);
-        }
-        if(seed===3){
-          g.fillStyle(0x9caf61,0.7);
-          g.fillRect(x*TILE+13,y*TILE+11,2,2);
-        }
-      }
-    }
-
-    // Main lanes, with darker earth borders and worn wheel tracks.
-    g.fillStyle(0x695b49,1);
-    g.fillRoundedRect(21*TILE-5,-10,6*TILE+10,WORLD_H+20,12);
-    g.fillRoundedRect(-10,16*TILE-5,WORLD_W+20,5*TILE+10,12);
-    g.fillStyle(0xb39a72,1);
-    g.fillRoundedRect(21*TILE, -10, 6*TILE, WORLD_H+20, 9);
-    g.fillRoundedRect(-10,16*TILE,WORLD_W+20,5*TILE,9);
-    // Route principale qui traverse la porte et relie les nouvelles régions.
-    g.fillStyle(0x695b49,1);
-    g.fillRoundedRect(45*TILE,16*TILE,21*TILE,5*TILE,12);
-    g.fillRoundedRect(60*TILE,18*TILE,5*TILE,25*TILE,12);
-    g.fillStyle(0xb39a72,1);
-    g.fillRoundedRect(45*TILE,16*TILE,21*TILE,5*TILE,9);
-    g.fillRoundedRect(60*TILE,18*TILE,5*TILE,25*TILE,9);
-    g.fillStyle(0xc1ad87,0.55);
-    g.fillRoundedRect(46*TILE,17*TILE,19*TILE,2*TILE,5);
-    g.fillRoundedRect(61*TILE,19*TILE,2*TILE,23*TILE,5);
-    g.fillStyle(0xc1ad87,0.55);
-    g.fillRoundedRect(22*TILE, -10, 2*TILE, WORLD_H+20, 5);
-    g.fillRoundedRect(-10,17*TILE,WORLD_W+20,2*TILE,5);
-
-    // Uneven cobbles and seams.
-    for(let y=0;y<MAP_H;y++){
-      for(let x=0;x<MAP_W;x++){
-        const onVertical=(x>=21&&x<27)||(x>=60&&x<65&&y>=18&&y<43);
-        const onHorizontal=(y>=16&&y<21&&x>=21&&x<66);
-        if(onVertical||onHorizontal){
-          const seed=(x*13+y*19)%9;
-          g.fillStyle(seed<3?0x8d806b:seed<6?0xc2b394:0x9d8e76,0.88);
-          const px=x*TILE+4+(seed*2)%9;
-          const py=y*TILE+5+(seed*3)%11;
-          g.fillRoundedRect(px,py,13+(seed%3)*4,7+(seed%2)*3,2);
-          g.lineStyle(1,0x6c614f,0.42);
-          g.lineBetween(px,py+7,px+12,py+7);
-        }
-      }
-    }
-    // Plaza around the fountain.
-    g.fillStyle(0x8f8878,1);
-    g.fillRoundedRect(18*TILE,13*TILE,12*TILE,10*TILE,22);
-    g.fillStyle(0xb2a78f,1);
-    g.fillRoundedRect(18*TILE+8,13*TILE+8,12*TILE-16,10*TILE-16,18);
-    for(let y=13;y<23;y++)for(let x=18;x<30;x++){
-      if((x+y)%2===0){
-        g.fillStyle(0xc7b99a,0.58);
-        g.fillRect(x*TILE+7,y*TILE+6,17,2);
-      }
-    }
-    // Tufts, tiny flowers and pebbles scattered away from the roads.
-    for(let i=0;i<115;i++){
-      const x=(i*97+41)%WORLD_W;
-      const y=(i*173+83)%WORLD_H;
-      if((x>21*TILE&&x<27*TILE)||(y>16*TILE&&y<21*TILE))continue;
-      g.fillStyle(i%4===0?0x9eb86a:0x345f38,0.85);
-      g.fillRect(x,y,2,5);
-      g.fillRect(x+3,y+2,2,4);
-      if(i%9===0){
-        g.fillStyle(i%2?0xe4c76b:0xd69ab2,1);
-        g.fillRect(x+5,y-2,3,3);
-      }
-    }
+    // Grande illustration isométrique de la capitale, utilisée comme décor du monde.
+    const artwork=scene.add.image(0,0,"ardencourt-art")
+      .setOrigin(0,0).setDisplaySize(WORLD_W,WORLD_H).setDepth(-20);
+    artwork.setData("region","Ardencourt");
   }
 
   function addFountain(scene) {
@@ -509,96 +425,9 @@ export function createWorld() {
     makeTreeTexture(this,"tree-green",false);
     makeTreeTexture(this,"tree-autumn",true);
 
-    const trees=[
-      [3,4,0],[9,8,0],[39,7,1],[4,29,0],[40,29,1],
-      [16,7,0],[31,29,0],[10,23,1],[38,22,0],[2,17,0],
-      [45,15,0],[7,13,1],[33,12,0],[14,32,0],[42,5,1],
-      [50,5,0],[53,10,1],[56,18,0],[59,5,0],[68,4,1],
-      [73,10,0],[77,19,1],[70,27,0],[55,28,1],[49,29,0],
-      [52,39,0],[57,49,1],[72,53,0],[77,42,1],[75,35,0],
-      [50,54,0],[57,57,0],[77,57,1],[69,37,0],[54,33,1]
-    ];
-    trees.forEach(([x,y,autumn])=>{
-      const groundX=x*TILE+16,groundY=y*TILE+20;
-      this.add.ellipse(groundX,groundY,34,9,0x10180f,0.30).setDepth(groundY-1);
-      const tree=this.add.image(groundX,y*TILE+16,autumn?"tree-autumn":"tree-green")
-        .setOrigin(0.5,0.86).setDepth(groundY+2);
-      tree.setScale(1.15);
-    });
-
-    addHouse(this,4,4,"house-plaster",0,false);
-    addHouse(this,12,3,"house-oak",2,false);
-    addHouse(this,34,4,"house-slate",1,false);
-    addHouse(this,4,25,"house-oak",2,false);
-    addHouse(this,34,24,"house-plaster",0,false);
-    addHouse(this,14,27,"house-slate",1,true);
-
-    addMarketStall(this,15*TILE+16,13*TILE+16,0xb9a16b,0x526b74);
-    addMarketStall(this,32*TILE+16,13*TILE+16,0x9a5542,0xe0c18b);
-    addFountain(this);
-    addProps(this);
-
-    // Ruines d'Aster : colonnes brisées, dalles et stèle ancienne.
-    const ruins=this.add.graphics().setDepth(90);
-    ruins.fillStyle(0x242b2b,0.22);ruins.fillEllipse(64*TILE,8*TILE,430,210);
-    ruins.fillStyle(0x77796e,1);
-    [[57,6],[60,5],[68,6],[71,10],[58,11],[67,12]].forEach(([x,y])=>{
-      ruins.fillRect(x*TILE,y*TILE,18,42);
-      ruins.fillStyle(0xb3aa91,1);ruins.fillRect(x*TILE-5,y*TILE-5,28,8);
-      ruins.fillStyle(0x77796e,1);
-    });
-    ruins.fillStyle(0x4e514b,1);ruins.fillRoundedRect(62*TILE,7*TILE,4*TILE,3*TILE,5);
-    ruins.fillStyle(0x9a927e,1);ruins.fillRoundedRect(62*TILE+8,7*TILE+8,4*TILE-16,3*TILE-16,3);
-    ruins.fillStyle(0x73d7e8,0.9);ruins.fillCircle(64*TILE,8*TILE+16,10);
-    this.add.text(64*TILE,4*TILE,"RUINES D’ASTER",{fontFamily:"monospace",fontSize:"13px",color:"#f3dfad",stroke:"#25251f",strokeThickness:4}).setOrigin(.5).setDepth(1200);
-
-    // Lac d'Azur : berges visibles et pont de bois au nord-ouest.
-    const lake=this.add.graphics().setDepth(40);
-    lake.fillStyle(0x3d5947,0.9);lake.fillEllipse(68*TILE,46*TILE,430,300);
-    lake.fillStyle(0x397f9d,1);lake.fillEllipse(68*TILE,46*TILE,390,264);
-    lake.lineStyle(5,0x9eaa79,0.9);lake.strokeEllipse(68*TILE,46*TILE,410,284);
-    lake.fillStyle(0x8bd8e4,0.42);lake.fillEllipse(66*TILE,44*TILE,120,35);
-    lake.fillStyle(0x235f80,0.55);lake.fillEllipse(71*TILE,48*TILE,105,42);
-    lake.fillStyle(0x8b6846,1);lake.fillRoundedRect(62*TILE,40*TILE,3*TILE,18,3);
-    lake.fillStyle(0xc39a64,1);lake.fillRect(62*TILE,40*TILE,3*TILE,5);
-    lake.fillStyle(0x60452f,1);lake.fillRect(62*TILE,40*TILE,3*TILE,2);
-    this.add.text(68*TILE,41*TILE,"LAC D’AZUR",{fontFamily:"monospace",fontSize:"13px",color:"#e4f5f3",stroke:"#183c4b",strokeThickness:4}).setOrigin(.5).setDepth(1300);
-
-    // Panneaux de direction pour rendre les régions faciles à repérer.
-    const sign=this.add.graphics().setDepth(1800);
-    sign.fillStyle(0x68442d,1);sign.fillRect(49*TILE,17*TILE,6,42);
-    sign.fillStyle(0xb58a54,1);sign.fillRoundedRect(49*TILE-34,17*TILE-12,76,19,3);
-    this.add.text(49*TILE+4,17*TILE-3,"FORET  →",{fontFamily:"monospace",fontSize:"9px",color:"#fff0c4"}).setOrigin(.5).setDepth(1801);
-    this.add.text(62*TILE,34*TILE,"VALLÉE D’ÉMERAUDE",{fontFamily:"monospace",fontSize:"12px",color:"#e8edc2",stroke:"#29402b",strokeThickness:4}).setOrigin(.5).setDepth(1300);
-
-    // Low stone wall with a real opening at the eastern gate.
-    const walls=this.add.graphics().setDepth(150);
-    walls.fillStyle(0x666a67,1);
-    walls.fillRect(45*TILE,2*TILE,2*TILE,13*TILE);
-    walls.fillRect(45*TILE,21*TILE,2*TILE,13*TILE);
-    walls.fillStyle(0x9b9b8d,1);
-    walls.fillRect(45*TILE,2*TILE,2*TILE,7);
-    walls.fillRect(45*TILE,21*TILE,2*TILE,7);
-    walls.fillStyle(0x474c4b,1);
-    walls.fillRect(45*TILE,2*TILE,5,13*TILE);
-    walls.fillRect(45*TILE,21*TILE,5,13*TILE);
-    for(let y=3;y<15;y+=2){
-      walls.lineStyle(2,0x484c49,0.8);walls.lineBetween(45*TILE,y*TILE,47*TILE,y*TILE);
-    }
-    for(let y=22;y<34;y+=2){
-      walls.lineStyle(2,0x484c49,0.8);walls.lineBetween(45*TILE,y*TILE,47*TILE,y*TILE);
-    }
-    walls.fillStyle(0x9c9a89,1);walls.fillRoundedRect(44*TILE,15*TILE,3*TILE,6*TILE,12);
-    walls.fillStyle(0x384340,1);walls.fillRoundedRect(44*TILE+13,15*TILE+13,3*TILE-26,6*TILE-13,10);
-
-    // Trees and bushes are placed behind and around houses for depth.
-    for(const [x,y] of [[8,5],[10,5],[37,6],[39,6],[7,27],[38,27],[12,30],[32,30],[2,23],[43,23]]){
-      const groundY=y*TILE+13;
-      this.add.ellipse(x*TILE,groundY,27,7,0x10180f,0.24).setDepth(groundY-1);
-      const bush=this.add.ellipse(x*TILE,y*TILE,54,30,0x2d653a).setDepth(groundY+1);
-      bush.setStrokeStyle(2,0x477d45,0.8);
-      this.add.ellipse(x*TILE-6,y*TILE-5,26,16,0x75a653).setDepth(groundY+2);
-    }
+    // Les bâtiments et jardins sont intégrés dans l'illustration détaillée.
+    // Les portes restent interactives et les collisions sont gérées séparément.
+    tavernDoor={x:1485,y:700};
 
     const cx=24*TILE+16,cy=18*TILE+16;
     const makeNpc=(key,x,y,tunic,hair,accent,cloak=false)=>{
@@ -650,8 +479,10 @@ export function createWorld() {
     // Les deux segments du rempart bloquent les côtés, mais la porte reste franchissable.
     addObstacle(46*TILE,8*TILE,64,13*TILE);
     addObstacle(46*TILE,27*TILE,64,13*TILE);
-    // L'eau du lac est infranchissable : le pont reste le passage naturel.
-    addObstacle(68*TILE,46*TILE,300,175);
+    // Façades du palais, de la bibliothèque et de la taverne.
+    addObstacle(840,150,470,210);
+    addObstacle(275,560,340,210);
+    addObstacle(1485,575,340,220);
     this.physics.add.collider(player,obstacles);
     // PNJ respectent les bâtiments, les limites et les obstacles du village.
     this.physics.add.collider(npcGroup,houseBodies);
