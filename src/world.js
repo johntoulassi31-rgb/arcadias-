@@ -393,8 +393,9 @@ export function createWorld() {
   }
 
   function addHouse(scene, x, y, key, style=0, isTavern=false) {
+    const groundY=y*TILE+193;
     const image=scene.add.image(x*TILE+120,y*TILE+177,key).setOrigin(0.5,0.92);
-    image.setDepth(y*TILE+220);
+    image.setDepth(groundY+4);
     const body=scene.add.rectangle(x*TILE+120,y*TILE+147,184,34,0x000000,0);
     scene.physics.add.existing(body,true);
     houseBodies.push(body);
@@ -409,8 +410,9 @@ export function createWorld() {
   }
 
   function addMarketStall(scene,x,y,clothA,clothB) {
-    const shadow=scene.add.ellipse(x,y+17,100,25,0x111710,0.3).setDepth(y+2);
-    const post=scene.add.graphics().setDepth(y+4);
+    const groundY=y+21;
+    scene.add.ellipse(x,y+19,82,13,0x111710,0.30).setDepth(groundY-1);
+    const post=scene.add.graphics().setDepth(groundY+2);
     post.fillStyle(0x67432e,1);
     post.fillRect(x-39,y-32,5,53);post.fillRect(x+34,y-32,5,53);
     post.fillRect(x-42,y-36,84,5);
@@ -424,7 +426,6 @@ export function createWorld() {
     post.fillStyle(0x765033,1);post.fillRect(x-34,y+3,68,18);
     post.fillStyle(0xc8a66c,1);post.fillRect(x-30,y+5,60,3);
     post.fillStyle(0x9b7346,1);post.fillRect(x-30,y-3,10,7);post.fillRect(x-10,y-3,10,7);post.fillRect(x+10,y-3,10,7);
-    scene.add.ellipse(x,y+19,80,16,0x080c0a,0.22).setDepth(y+1);
   }
 
   function polygonToGraphics(graphics,points,color) {
@@ -436,33 +437,38 @@ export function createWorld() {
   }
 
   function addProps(scene) {
-    // Barrels, crates and benches near the market.
-    const prop=scene.add.graphics();
-    prop.setDepth(500);
+    // Each prop is depth-sorted at its actual contact line with the ground.
     for(const [x,y] of [[17,12],[29,25],[10,20],[37,18]]){
-      const px=x*TILE,py=y*TILE;
-      prop.fillStyle(0x171b14,0.28);prop.fillEllipse(px+4,py+17,31,10);
+      const px=x*TILE,py=y*TILE,groundY=py+15;
+      const prop=scene.add.graphics().setDepth(groundY+2);
+      scene.add.ellipse(px+4,py+17,18,6,0x111710,0.30).setDepth(groundY-1);
       prop.fillStyle(0x70462e,1);prop.fillRoundedRect(px-8,py-13,25,27,4);
       prop.fillStyle(0xb27c4b,1);prop.fillRect(px-5,py-11,18,3);prop.fillRect(px-5,py+5,18,3);
       prop.fillStyle(0x533321,1);prop.fillRect(px+1,py-12,3,25);
+      prop.lineStyle(1,0x3b291f,0.9);prop.strokeRoundedRect(px-8,py-13,25,27,4);
     }
     for(const [x,y] of [[18,11],[30,24]]){
-      const px=x*TILE,py=y*TILE;
+      const px=x*TILE,py=y*TILE,groundY=py+14;
+      const prop=scene.add.graphics().setDepth(groundY+2);
+      scene.add.ellipse(px+1,py+15,20,6,0x111710,0.28).setDepth(groundY-1);
       prop.fillStyle(0x5d3d29,1);prop.fillRect(px-13,py-9,28,22);
       prop.fillStyle(0xa97948,1);prop.fillRect(px-11,py-7,24,3);
       prop.fillStyle(0x453023,1);prop.fillRect(px-8,py-3,3,15);prop.fillRect(px+5,py-3,3,15);
+      prop.lineStyle(1,0x34251c,0.9);prop.strokeRect(px-13,py-9,28,22);
     }
-    // Street lamps.
     for(const [x,y] of [[19,15],[28,15],[19,22],[29,22],[8,17],[39,17]]){
-      const px=x*TILE,py=y*TILE;
+      const px=x*TILE,py=y*TILE,groundY=py+3;
+      const prop=scene.add.graphics().setDepth(groundY+2);
+      scene.add.ellipse(px,py+4,13,5,0x111710,0.28).setDepth(groundY-1);
       prop.fillStyle(0x4c4031,1);prop.fillRect(px-2,py-25,4,27);
       prop.fillStyle(0x2e2c29,1);prop.fillRect(px-8,py-29,16,4);
       prop.fillStyle(0xf7d98b,1);prop.fillRect(px-5,py-25,10,9);
       prop.fillStyle(0xffd170,0.16);prop.fillCircle(px,py-20,16);
     }
-    // Benches along the paved square.
     for(const [x,y] of [[20,14],[28,22]]){
-      const px=x*TILE,py=y*TILE;
+      const px=x*TILE,py=y*TILE,groundY=py+12;
+      const prop=scene.add.graphics().setDepth(groundY+2);
+      scene.add.ellipse(px,py+13,22,6,0x111710,0.28).setDepth(groundY-1);
       prop.fillStyle(0x493326,1);prop.fillRect(px-18,py-2,36,5);
       prop.fillStyle(0x9c6a3c,1);prop.fillRect(px-18,py-8,36,7);
       prop.fillRect(px-13,py+3,4,9);prop.fillRect(px+10,py+3,4,9);
@@ -489,8 +495,10 @@ export function createWorld() {
       [45,15,0],[7,13,1],[33,12,0],[14,32,0],[42,5,1]
     ];
     trees.forEach(([x,y,autumn])=>{
-      const tree=this.add.image(x*TILE+16,y*TILE+16,autumn?"tree-autumn":"tree-green")
-        .setOrigin(0.5,0.86).setDepth(y*TILE+30);
+      const groundX=x*TILE+16,groundY=y*TILE+20;
+      this.add.ellipse(groundX,groundY,34,9,0x10180f,0.30).setDepth(groundY-1);
+      const tree=this.add.image(groundX,y*TILE+16,autumn?"tree-autumn":"tree-green")
+        .setOrigin(0.5,0.86).setDepth(groundY+2);
       tree.setScale(1.15);
     });
 
@@ -519,9 +527,11 @@ export function createWorld() {
 
     // Trees and bushes are placed behind and around houses for depth.
     for(const [x,y] of [[8,5],[10,5],[37,6],[39,6],[7,27],[38,27],[12,30],[32,30],[2,23],[43,23]]){
-      const bush=this.add.ellipse(x*TILE,y*TILE,54,30,0x2d653a).setDepth(y*TILE+5);
+      const groundY=y*TILE+13;
+      this.add.ellipse(x*TILE,groundY,27,7,0x10180f,0.24).setDepth(groundY-1);
+      const bush=this.add.ellipse(x*TILE,y*TILE,54,30,0x2d653a).setDepth(groundY+1);
       bush.setStrokeStyle(2,0x477d45,0.8);
-      this.add.ellipse(x*TILE-6,y*TILE-5,26,16,0x75a653).setDepth(y*TILE+6);
+      this.add.ellipse(x*TILE-6,y*TILE-5,26,16,0x75a653).setDepth(groundY+2);
     }
 
     const cx=24*TILE+16,cy=18*TILE+16;
