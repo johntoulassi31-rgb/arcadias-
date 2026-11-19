@@ -218,6 +218,9 @@ export function createWorld() {
   let sceneRef=null;
   let inside=false;
   let tavernDoor={x:0,y:0};
+  let cityVisibility=null;
+  let interiorObjects=[];
+  let interiorDoor={x:0,y:0};
 
   const parent=document.querySelector("#world3d");
   const game=new Phaser.Game({
@@ -599,11 +602,49 @@ export function createWorld() {
     },
     nearDoor(){
       if(!sceneRef?.player)return false;
-      return Phaser.Math.Distance.Between(sceneRef.player.x,sceneRef.player.y,tavernDoor.x,tavernDoor.y)<66;
+      const door=inside?interiorDoor:tavernDoor;
+       return Phaser.Math.Distance.Between(sceneRef.player.x,sceneRef.player.y,door.x,door.y)<72;
     },
     nearInnkeeper(){return false;},
-    enterInterior(){inside=true;return true;},
-    exitInterior(){inside=false;return true;},
+    enterInterior(){
+      if(!sceneRef?.player||inside)return false;
+      inside=true;
+      const scene=sceneRef,p=scene.player;
+      cityVisibility=scene.children.list.map(obj=>[obj,obj.visible]);
+      cityVisibility.forEach(([obj])=>{if(obj!==p&&obj!==p.getData("shadow"))obj.setVisible(false);});
+      const g=scene.add.graphics().setDepth(10);
+      g.fillStyle(0x111522,1);g.fillRect(0,0,WORLD_W,WORLD_H);
+      g.fillStyle(0x76513b,1);g.fillRoundedRect(11*TILE,8*TILE,26*TILE,20*TILE,18);
+      g.fillStyle(0xc49a68,1);g.fillRoundedRect(12*TILE,9*TILE,24*TILE,18*TILE,12);
+      g.fillStyle(0x8d6344,1);g.fillRect(13*TILE,10*TILE,22*TILE,16*TILE);
+      g.fillStyle(0xb98250,1);g.fillRect(14*TILE,12*TILE,20*TILE,12*TILE);
+      for(let y=12;y<24;y++)for(let x=14;x<34;x++){if((x+y)%2===0){g.lineStyle(1,0x75482f,.55);g.lineBetween(x*TILE,y*TILE,(x+1)*TILE,y*TILE);}}
+      g.fillStyle(0x493044,1);g.fillRect(13*TILE,10*TILE,22*TILE,2*TILE);
+      g.fillStyle(0x342638,1);g.fillRect(13*TILE,10*TILE,2*TILE,16*TILE);g.fillRect(33*TILE,10*TILE,2*TILE,16*TILE);
+      g.fillStyle(0x26394a,1);g.fillRect(21*TILE,10*TILE,5*TILE,2*TILE);
+      g.lineStyle(3,0xe5bd83,1);g.strokeRect(21*TILE,10*TILE,5*TILE,2*TILE);
+      g.fillStyle(0x392b2a,1);g.fillRoundedRect(29*TILE,12*TILE,4*TILE,5*TILE,5);
+      g.fillStyle(0xf18a42,1);g.fillEllipse(31*TILE,16*TILE,54,35);
+      g.fillStyle(0xffd477,.75);g.fillEllipse(31*TILE,16*TILE,25,19);
+      g.fillStyle(0x563522,1);g.fillRoundedRect(17*TILE,16*TILE,5*TILE,3*TILE,5);
+      g.fillStyle(0xc18a51,1);g.fillRoundedRect(17*TILE,15*TILE,5*TILE,2*TILE,4);
+      g.fillStyle(0x563522,1);g.fillRoundedRect(25*TILE,19*TILE,5*TILE,3*TILE,5);
+      g.fillStyle(0xc18a51,1);g.fillRoundedRect(25*TILE,18*TILE,5*TILE,2*TILE,4);
+      g.fillStyle(0x4b3025,1);g.fillRect(15*TILE,11*TILE,7*TILE,2*TILE);
+      g.fillStyle(0xe4c27e,1);g.fillRect(15*TILE,11*TILE,7*TILE,3);
+      interiorDoor={x:24*TILE+16,y:24*TILE};
+      interiorObjects=[g,scene.add.text(24*TILE+16,9*TILE,"AUBERGE DU DRAGON D’OR",{fontFamily:"Georgia",fontSize:"22px",color:"#ffe0a0",stroke:"#40291e",strokeThickness:5}).setOrigin(.5).setDepth(20)];
+      scene.add.text(24*TILE+16,26*TILE,"SORTIE",{fontFamily:"Georgia",fontSize:"14px",color:"#fff0c4",stroke:"#40291e",strokeThickness:4}).setOrigin(.5).setDepth(20);
+      p.setPosition(interiorDoor.x,interiorDoor.y-90);p.body.reset(p.x,p.y);p.body.setCollideWorldBounds(false);
+      return true;
+    },
+    exitInterior(){
+      if(!sceneRef?.player||!inside)return false;
+      inside=false;interiorObjects.forEach(obj=>obj?.destroy());interiorObjects=[];
+      cityVisibility?.forEach(([obj,visible])=>{if(obj?.active)obj.setVisible(visible);});cityVisibility=null;
+      const p=sceneRef.player;p.setPosition(tavernDoor.x,tavernDoor.y+75);p.body.reset(p.x,p.y);p.body.setCollideWorldBounds(true);
+      return true;
+    },
     get insideBuilding(){return inside;},
     get player(){return sceneRef?.player||null;},
     destroy(){game.destroy(true);sceneRef=null;}
