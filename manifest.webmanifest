@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "ARCADIAS — Royaume d’Asterion",
+  "short_name": "ARCADIAS",
+  "description": "Explorez les royaumes d’Asterion.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen"
+  ],
+  "orientation": "landscape",
+  "background_color": "#101522",
+  "theme_color": "#101522",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
