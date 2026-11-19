@@ -150,7 +150,7 @@ function panel(kind){
  skills:["Compétences",'<p><strong>Frappe héroïque</strong> — attaque rapprochée.</p><p><strong>Onde arcanique</strong> — compétence magique.</p><p><strong>Roulade</strong> — esquive rapide.</p>'],
  mount:["Monture",'<p>Aucune monture équipée.</p><p>Débloquez votre première monture auprès du maître des écuries.</p>'],
  familiars:["Familiers",'<p>Aucun familier invoqué.</p><p>Les familiers vous accompagneront dans vos aventures.</p>'],
- shop:["Boutique",'<p>Marchandises disponibles :</p><ul><li>Potion de soin — 120 or</li><li>Potion de mana — 150 or</li><li>Clé de coffre — 500 or</li></ul>'],
+ shop:["Boutique",'<p>Or disponible : <strong>'+state.gold.toLocaleString("fr-FR")+'</strong></p><p>Marchandises :</p><ul><li>Potion de soin — 120 or</li><li>Potion de mana — 150 or</li><li>Clé de coffre — 500 or</li></ul><button class="panel-action" data-action="buy-heal">Acheter une potion de soin · 120 or</button><button class="panel-action" data-action="buy-mana">Acheter une potion de mana · 150 or</button><button class="panel-action" data-action="buy-key">Acheter une clé · 500 or</button>'],
  events:["Événements",'<p><strong>Festival d’Ardencourt</strong></p><p>Participez aux activités de la cité pour gagner des récompenses.</p>'],
  rewards:["Récompenses",'<p>Récompense de connexion : en attente.</p><p>Récompense quotidienne : 100 pièces d’or.</p>'],
  menu:["Menu du jeu",'<p>Profil · Paramètres · Aide · Sauvegarde</p><p>ARCADIAS — Royaume d’Asterion</p>'],
@@ -178,6 +178,18 @@ document.querySelector("#panel-content").addEventListener("click",e=>{
   case "mount-off":state.mount=null;toastMessage("Monture rangée.");panel("mount");break;
   case "familiar-summon":state.familiar="Petit esprit-loup";toastMessage("Ton familier te rejoint.");panel("familiars");break;
   case "familiar-off":state.familiar=null;toastMessage("Familier renvoyé.");panel("familiars");break;
+  case "buy-heal":
+   if(state.gold<120)toastMessage("Or insuffisant.");
+   else{state.gold-=120;state.inventory.push("Potion de soin");toastMessage("Potion de soin achetée.");}
+   panel("shop");break;
+  case "buy-mana":
+   if(state.gold<150)toastMessage("Or insuffisant.");
+   else{state.gold-=150;state.inventory.push("Potion de mana");toastMessage("Potion de mana achetée.");}
+   panel("shop");break;
+  case "buy-key":
+   if(state.gold<500)toastMessage("Or insuffisant.");
+   else{state.gold-=500;state.inventory.push("Clé de coffre");toastMessage("Clé de coffre achetée.");}
+   panel("shop");break;
   case "combat-toggle":state.combat=!state.combat;toastMessage(state.combat?"Mode combat activé.":"Mode exploration activé.");panel("combat");break;
   case "skill-strike":toastMessage(state.combat?"Frappe héroïque : aucune cible à portée.":"Active d’abord le mode combat.");break;
   case "skill-magic":if(!state.combat)toastMessage("Active d’abord le mode combat.");else if(state.mp<35)toastMessage("Mana insuffisant.");else{state.mp-=35;toastMessage("Onde arcanique lancée !");panel("combat");}break;
