@@ -476,14 +476,12 @@ export function createWorld() {
       obstacles.add(block);
       block.body.setSize(w,h);
     };
-    // Collisions approximatives des bâtiments et du bassin central d’Ardencourt.
-    addObstacle(1280,78,1120,135);
-    addObstacle(270,185,470,210);
-    addObstacle(2390,475,300,340);
-    addObstacle(1280,720,350,58);
-    addObstacle(1088,850,58,250);
-    addObstacle(1472,850,58,250);
-    addObstacle(1280,1035,350,48);
+    // Collision du bassin central : anneau solide, passage libre tout autour.
+    addObstacle(1280,960,250,112);
+    // Les troncs des arbres bloquent le passage, pas leur feuillage.
+    [[18,8],[27,8],[51,8],[60,8],[18,49],[27,49],[51,49],[60,49],
+     [4,25],[4,35],[75,25],[75,35],[18,18],[60,18],[18,39],[60,39]]
+      .forEach(([tx,ty])=>addObstacle(tx*TILE+16,ty*TILE+30,22,18));
     // Arbres, colonnes en ruine et eau du Lac d’Azur dans les nouvelles régions.
     const frontierX=2560;
     [[130,120],[410,120],[610,80],[990,80],[900,470],[250,540],[690,560],
