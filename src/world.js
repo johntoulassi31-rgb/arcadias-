@@ -281,9 +281,11 @@ export function createWorld() {
         catch(error){
           console.error("ARCADIAS scene initialization failed:",error);
           this.add.rectangle(0,0,WORLD_W,WORLD_H,0x527f43).setOrigin(0);
-          this.add.text(24,24,"ARCADIAS · Chargement du monde",{
-            fontFamily:"monospace",fontSize:"18px",color:"#fff0c4",
-            backgroundColor:"#263528",padding:{x:10,y:8}
+          const message=String(error?.message||error||"Erreur inconnue").slice(0,180);
+          this.add.text(24,24,"ARCADIAS · ERREUR DE CHARGEMENT\\n"+message,{
+            fontFamily:"monospace",fontSize:"14px",color:"#fff0c4",
+            backgroundColor:"#5b2028",padding:{x:10,y:8},
+            wordWrap:{width:Math.max(220,(parent?.clientWidth||window.innerWidth)-48)}
           }).setScrollFactor(0).setDepth(99999);
           try{
             makeCharacterTexture(this,"hero-recovery","#3e5d91","#493126","#d6bd7e");
