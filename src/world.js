@@ -172,8 +172,16 @@ function makeCharacterTexture(scene,key,tunic,hair,accent,cloak=false) {
   const fw=48,fh=64,cols=3,rows=4;
   const texture=scene.textures.createCanvas(key,fw*cols,fh*rows);
   const ctx=texture.getContext();ctx.imageSmoothingEnabled=true;
+  // rounded rectangle compatible with older Android WebView/Chrome builds.
   const rr=(x,y,w,h,r,color,stroke="#30283a",lw=1.6)=>{
-    ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
+    const rad=Math.min(r,w/2,h/2);
+    ctx.fillStyle=color;ctx.beginPath();
+    ctx.moveTo(x+rad,y);ctx.lineTo(x+w-rad,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+rad);
+    ctx.lineTo(x+w,y+h-rad);ctx.quadraticCurveTo(x+w,y+h,x+w-rad,y+h);
+    ctx.lineTo(x+rad,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-rad);
+    ctx.lineTo(x,y+rad);ctx.quadraticCurveTo(x,y,x+rad,y);
+    ctx.closePath();ctx.fill();
     if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}
   };
   const ellipse=(x,y,rx,ry,color,stroke=null,lw=1)=>{
@@ -199,13 +207,13 @@ function makeCharacterTexture(scene,key,tunic,hair,accent,cloak=false) {
     ellipse(36,48,3.3,3.7,"#f0c4a9","#8c5d59",.8);
     // Tête large et joues rosées.
     rr(19,29,10,8,3,"#efc3a7","#a86e65",1);
-    ellipse(24,19,15,16,"#f4cdb2","#392b3a",2);
+    ellipse(24,19,12.5,13.5,"#f4cdb2","#392b3a",1.8);
     // Chevelure en volume, avec reflets façon illustration webtoon.
     ctx.fillStyle=hair;ctx.strokeStyle="#302638";ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(9,20);ctx.quadraticCurveTo(5,2,23,2);
-    ctx.quadraticCurveTo(42,0,39,20);ctx.lineTo(36,29);
-    ctx.quadraticCurveTo(31,20,29,15);ctx.quadraticCurveTo(23,25,16,17);
-    ctx.lineTo(12,29);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(11,20);ctx.quadraticCurveTo(7,3,23,3);
+    ctx.quadraticCurveTo(41,1,37,20);ctx.lineTo(35,28);
+    ctx.quadraticCurveTo(30,20,29,15);ctx.quadraticCurveTo(23,24,17,17);
+    ctx.lineTo(13,28);ctx.closePath();ctx.fill();ctx.stroke();
     ctx.fillStyle="rgba(255,255,255,.28)";
     ctx.beginPath();ctx.moveTo(13,11);ctx.quadraticCurveTo(22,1,32,8);
     ctx.quadraticCurveTo(23,6,17,17);ctx.closePath();ctx.fill();
@@ -221,15 +229,15 @@ function makeCharacterTexture(scene,key,tunic,hair,accent,cloak=false) {
       ctx.beginPath();ctx.moveTo(14,17);ctx.quadraticCurveTo(18,14,22,17);
       ctx.moveTo(26,17);ctx.quadraticCurveTo(30,14,34,17);ctx.stroke();
       const iris=key==="amelie"?"#9a5d9b":key==="mage"?"#6b91d7":"#4d83a7";
-      ellipse(18.5,21,3.1,4.4,"#fff");
-      ellipse(29.5,21,3.1,4.4,"#fff");
-      ellipse(18.8,21,2.35,3.5,iris);
-      ellipse(29.8,21,2.35,3.5,iris);
-      ellipse(19.4,19.6,.9,1.2,"#fff");
-      ellipse(30.4,19.6,.9,1.2,"#fff");
+      ellipse(19,21,2.7,3.8,"#fff");
+      ellipse(29,21,2.7,3.8,"#fff");
+      ellipse(19,21,2.05,3.1,iris);
+      ellipse(29,21,2.05,3.1,iris);
+      ellipse(19.5,19.7,.8,1,"#fff");
+      ellipse(29.5,19.7,.8,1,"#fff");
       // Reflets de joues et petit sourire.
-      ellipse(12.5,26,2.2,1.1,"rgba(239,130,143,.38)");
-      ellipse(35.5,26,2.2,1.1,"rgba(239,130,143,.38)");
+      ellipse(14,26,1.8,.9,"rgba(239,130,143,.38)");
+      ellipse(34,26,1.8,.9,"rgba(239,130,143,.38)");
       ctx.strokeStyle="#a45f69";ctx.lineWidth=1.1;
       ctx.beginPath();ctx.moveTo(22,28);ctx.quadraticCurveTo(24,30,26,28);ctx.stroke();
     }
