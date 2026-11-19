@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1920" viewBox="0 0 2560 1920">
+<defs>
+ <linearGradient id="forest" x2="0" y2="1"><stop stop-color="#315f42"/><stop offset="1" stop-color="#244b39"/></linearGradient>
+ <linearGradient id="meadow" x2="0" y2="1"><stop stop-color="#7c9851"/><stop offset="1" stop-color="#4e7847"/></linearGradient>
+ <linearGradient id="water" x2="0" y2="1"><stop stop-color="#9ce6e8"/><stop offset=".45" stop-color="#3c9db7"/><stop offset="1" stop-color="#1d617d"/></linearGradient>
+ <linearGradient id="stone" x2="0" y2="1"><stop stop-color="#d9cba8"/><stop offset="1" stop-color="#8e846f"/></linearGradient>
+ <pattern id="grassdots" width="90" height="74" patternUnits="userSpaceOnUse"><circle cx="12" cy="19" r="3" fill="#b4cb70" opacity=".28"/><circle cx="63" cy="52" r="4" fill="#1e4b35" opacity=".3"/><path d="M36 60l5-8 4 8" fill="none" stroke="#b7c66c" stroke-width="2" opacity=".22"/></pattern>
+ <pattern id="cobble" width="58" height="38" patternUnits="userSpaceOnUse"><path d="M0 0H58M0 19H58M18 0V19M44 19V38" fill="none" stroke="#796f5e" stroke-width="3" opacity=".45"/><path d="M4 4h10M28 23h12" stroke="#fff0ce" stroke-width="3" opacity=".35"/></pattern>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation="10"/></filter>
+ <g id="tree"><ellipse cy="42" rx="57" ry="17" fill="#102c20" opacity=".32"/><path d="M-10 44L-7 -4H10L13 44" fill="#765036" stroke="#3e3328" stroke-width="5"/><path d="M0 8L-27 -19M4 10L33 -20" stroke="#765036" stroke-width="9"/><g stroke="#214e35" stroke-width="5"><circle cx="-30" cy="-20" r="34" fill="#2d6b43"/><circle cx="12" cy="-40" r="43" fill="#438a4b"/><circle cx="47" cy="-14" r="34" fill="#28613d"/><circle cx="2" cy="-5" r="38" fill="#5b9e51"/></g><g fill="#a5ce68"><circle cx="-14" cy="-44" r="7"/><circle cx="22" cy="-59" r="8"/><circle cx="43" cy="-18" r="7"/><circle cx="-3" cy="-8" r="7"/></g></g>
+ <g id="pine"><path d="M0 55L-34 8H-17L-42 -25H-18L0 -68L18 -25H42L17 8H34Z" fill="#28573e" stroke="#183d30" stroke-width="5"/><path d="M0 -57V54" stroke="#765039" stroke-width="8"/><path d="M-16 -3L0 -25L15 -3" fill="none" stroke="#6fa65a" stroke-width="5"/></g>
+ <g id="flower"><circle r="7" fill="#e8a6d2"/><circle cx="8" cy="-3" r="6" fill="#fff0d4"/><circle cx="-7" cy="-5" r="6" fill="#f6c6df"/><circle cy="5" r="4" fill="#ffdc79"/></g>
+ <g id="rock"><path d="M-35 13L-25 -13L-5 -27L21 -17L36 12L22 26H-22Z" fill="#8b8d80" stroke="#4d594d" stroke-width="5"/><path d="M-22 -10L-5 -23L13 -16L-3 -8Z" fill="#c2c2a8" opacity=".65"/></g>
+ <g id="ruin-column"><path d="M-18 42L-13 -32H13L18 42Z" fill="#a69e88" stroke="#55584e" stroke-width="5"/><path d="M-24 -34H24V-22H-24ZM-22 39H22V50H-22Z" fill="#d0c4a5" stroke="#55584e" stroke-width="4"/><path d="M-8 -22V34M8 -22V34" stroke="#77796c" stroke-width="4"/></g>
+</defs>
+<rect width="2560" height="1920" fill="url(#meadow)"/><rect width="2560" height="1920" fill="url(#grassdots)"/>
+<!-- Forest belt -->
+<path d="M0 0H1150V630Q870 780 0 700Z" fill="url(#forest)"/>
+<path d="M0 0H1150V630Q870 780 0 700Z" fill="url(#grassdots)" opacity=".8"/>
+<g><use href="#pine" x="110" y="120"/><use href="#pine" x="260" y="80"/><use href="#tree" x="420" y="130"/><use href="#pine" x="600" y="80"/><use href="#tree" x="780" y="130"/><use href="#pine" x="980" y="80"/><use href="#tree" x="1080" y="320"/><use href="#pine" x="900" y="470"/><use href="#tree" x="690" y="560"/><use href="#pine" x="470" y="510"/><use href="#tree" x="260" y="540"/><use href="#pine" x="90" y="430"/><use href="#tree" x="130" y="760"/><use href="#tree" x="380" y="790"/><use href="#pine" x="640" y="760"/><use href="#tree" x="930" y="730"/></g>
+<!-- Main road continuation from Ardencourt -->
+<path d="M0 640C280 640 420 780 650 760S1010 620 1220 710S1610 940 1840 820S2180 590 2560 660" fill="none" stroke="#75664f" stroke-width="190"/>
+<path d="M0 640C280 640 420 780 650 760S1010 620 1220 710S1610 940 1840 820S2180 590 2560 660" fill="none" stroke="url(#stone)" stroke-width="164"/>
+<path d="M0 640C280 640 420 780 650 760S1010 620 1220 710S1610 940 1840 820S2180 590 2560 660" fill="none" stroke="url(#cobble)" stroke-width="160"/>
+<!-- Ruins of Aster -->
+<ellipse cx="1550" cy="350" rx="590" ry="330" fill="#1c3327" opacity=".23" filter="url(#shadow)"/>
+<path d="M1000 60H2110V590H1000Z" fill="#8e8b73" opacity=".18"/>
+<g transform="translate(1510 330)">
+ <path d="M-500 175H500V220H-500Z" fill="#666657" opacity=".45"/>
+ <path d="M-430 150L-340 -80L-250 150M-210 150L-110 -140L-10 150M40 150L135 -70L230 150M270 150L350 -30L430 150" fill="none" stroke="#8d8b7a" stroke-width="24" stroke-linecap="round"/>
+ <path d="M-470 145H-280M-240 145H20M70 145H250M300 145H465" stroke="#d0c6a8" stroke-width="22"/>
+ <use href="#ruin-column" x="-345" y="20"/><use href="#ruin-column" x="-120" y="-10"/><use href="#ruin-column" x="145" y="10"/><use href="#ruin-column" x="360" y="25"/>
+ <path d="M-55 185V70Q0 -10 55 70V185Z" fill="#55594f" stroke="#c1b89e" stroke-width="18"/>
+ <path d="M-34 185V80Q0 32 34 80V185Z" fill="#243c3c"/>
+ <circle cy="98" r="32" fill="#6ec5d3" stroke="#e6d4a6" stroke-width="8"/>
+ <path d="M-15 95L0 67L15 95L0 120Z" fill="#e8f2cf"/>
+</g>
+<g><use href="#rock" x="1050" y="250"/><use href="#rock" x="1940" y="260"/><use href="#rock" x="1200" y="540"/><use href="#rock" x="1830" y="530"/></g>
+<!-- Emerald valley and flower fields -->
+<path d="M0 1050Q380 850 800 1080T1600 1080T2560 1030V1920H0Z" fill="#668b4d"/>
+<path d="M0 1210Q420 990 780 1230T1540 1210T2560 1160V1920H0Z" fill="#789b55" opacity=".7"/>
+<g opacity=".95"><use href="#tree" x="160" y="1160"/><use href="#tree" x="420" y="1390"/><use href="#tree" x="790" y="1150"/><use href="#tree" x="1120" y="1450"/><use href="#tree" x="1500" y="1190"/><use href="#tree" x="1860" y="1390"/><use href="#tree" x="2220" y="1150"/><use href="#tree" x="2430" y="1550"/></g>
+<g><use href="#flower" x="280" y="1040"/><use href="#flower" x="340" y="1060"/><use href="#flower" x="390" y="1030"/><use href="#flower" x="850" y="1500"/><use href="#flower" x="910" y="1520"/><use href="#flower" x="970" y="1490"/><use href="#flower" x="1730" y="1130"/><use href="#flower" x="1780" y="1150"/><use href="#flower" x="1840" y="1120"/></g>
+<!-- Azure lake, southern east -->
+<ellipse cx="2090" cy="1480" rx="510" ry="350" fill="#315f43" opacity=".6"/>
+<ellipse cx="2090" cy="1470" rx="470" ry="310" fill="url(#water)" stroke="#d0c39d" stroke-width="26"/>
+<ellipse cx="2090" cy="1470" rx="430" ry="275" fill="none" stroke="#8ee2e9" stroke-width="8" opacity=".65"/>
+<path d="M1760 1390Q1900 1330 2040 1380T2340 1370M1810 1510Q1970 1450 2120 1500T2390 1480" fill="none" stroke="#c4f6ed" stroke-width="13" opacity=".45"/>
+<path d="M1940 1160L2040 1240L2140 1160L2230 1240" fill="none" stroke="#6b563d" stroke-width="48" stroke-linecap="round"/>
+<path d="M1940 1160L2040 1240L2140 1160L2230 1240" fill="none" stroke="#b68a58" stroke-width="34" stroke-linecap="round"/>
+<path d="M1940 1160L2040 1240L2140 1160L2230 1240" fill="none" stroke="#e1c28d" stroke-width="5" stroke-dasharray="18 16"/>
+<g><use href="#rock" x="1640" y="1290"/><use href="#rock" x="2440" y="1330"/><use href="#rock" x="1780" y="1740"/><use href="#rock" x="2290" y="1760"/></g>
+<!-- wayfinding stone posts -->
+<g transform="translate(120 640)"><path d="M0 0V-120" stroke="#62482f" stroke-width="18"/><path d="M-105 -145H105V-82H-105Z" fill="#815d39" stroke="#e0bd7c" stroke-width="8"/><text x="0" y="-104" text-anchor="middle" font-family="Georgia" font-size="29" font-weight="bold" fill="#fff0c4">ASTERION</text></g>
+<g transform="translate(1220 720)"><path d="M0 0V-100" stroke="#62482f" stroke-width="18"/><path d="M-155 -130H155V-70H-155Z" fill="#815d39" stroke="#e0bd7c" stroke-width="8"/><text x="0" y="-91" text-anchor="middle" font-family="Georgia" font-size="26" font-weight="bold" fill="#fff0c4">RUINES D’ASTER</text></g>
+<g transform="translate(2020 1060)"><path d="M0 0V-90" stroke="#62482f" stroke-width="16"/><path d="M-150 -120H150V-65H-150Z" fill="#815d39" stroke="#e0bd7c" stroke-width="7"/><text x="0" y="-83" text-anchor="middle" font-family="Georgia" font-size="24" font-weight="bold" fill="#fff0c4">LAC D’AZUR</text></g>
+</svg>
