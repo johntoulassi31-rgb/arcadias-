@@ -264,7 +264,24 @@ export function createWorld() {
     roundPixels:true,
     scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
     physics:{default:"arcade",arcade:{debug:false}},
-    scene:{create,update}
+    scene:{
+      create:function(){
+        try{create.call(this);}
+        catch(error){
+          console.error("ARCADIAS scene initialization failed:",error);
+          this.add.rectangle(0,0,WORLD_W,WORLD_H,0x527f43).setOrigin(0);
+          this.add.text(24,24,"ARCADIAS · Chargement du monde",{
+            fontFamily:"monospace",fontSize:"18px",color:"#fff0c4",
+            backgroundColor:"#263528",padding:{x:10,y:8}
+          }).setScrollFactor(0).setDepth(99999);
+          try{
+            makeCharacterTexture(this,"hero-recovery","#3e5d91","#493126","#d6bd7e");
+            this.add.sprite(160,160,"hero-recovery",1).setScale(2).setDepth(100000);
+          }catch(spriteError){console.error("ARCADIAS hero recovery failed:",spriteError);}
+        }
+      },
+      update
+    }
   });
 
   function drawGround(scene) {
@@ -599,7 +616,13 @@ export function createWorld() {
   return {
     move(dx,dy){
       if(!sceneRef)return false;
-      sceneRef.desired={x:dx,y:dy};
+      const x=Number.isFinite(dx)?dx:0;
+      const y=Number.isFinite(dy)?dy:0;
+      sceneRef.desired={x,y};
+      if(sceneRef.player?.body && x===0 && y===0){
+        sceneRef.player.body.setVelocity(0,0);
+        sceneRef.player.body.stop();
+      }
       return true;
     },
     nearAmelie(){
