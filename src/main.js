@@ -7,6 +7,8 @@ const keyboardHeld=new Set();
 const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const keyMap={ArrowUp:"up",KeyW:"up",ArrowDown:"down",KeyS:"down",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right"};
 const status=document.querySelector("#move-state"),hint=document.querySelector("#collision-hint");
+const mapTitle=document.querySelector(".map-title"),mapCoords=document.querySelector(".mini-map small");
+let lastRegion="";
 const interactButton=document.querySelector("#interact"),dialogue=document.querySelector("#dialogue");
 const chatToggle=document.querySelector("#chat-toggle"),chatPanel=document.querySelector("#chat-panel");
 chatToggle?.addEventListener("click",()=>{
@@ -42,6 +44,15 @@ function syncHeld(){
  update();
 }
 function update(){
+ const player=game.player;
+ if(player&&mapTitle){
+  const x=player.x,y=player.y,frontier=x>=2560,fx=x-2560;
+  const region=!frontier?"Ardencourt":(y<620?(fx>950?"Ruines d’Aster":"Forêt des Murmures"):(y>1120&&fx>1650?"Lac d’Azur":"Vallée d’Émeraude"));
+  if(mapTitle.firstChild)mapTitle.firstChild.textContent=region+" ";
+  if(mapCoords)mapCoords.textContent="("+Math.floor(x/32)+", "+Math.floor(y/32)+")";
+  if(region!==lastRegion&&lastRegion){toastMessage("Nouvelle région : "+region);}
+  lastRegion=region;
+ }
  const labels={up:"Haut",down:"Bas",left:"Gauche",right:"Droite"};
  const label=held.size?[...held].map(d=>labels[d]).join(" + "):"Prêt";
  if(status){status.value=label;status.textContent=label;}
