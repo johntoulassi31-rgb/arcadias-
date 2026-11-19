@@ -167,75 +167,81 @@ function makeTreeTexture(scene, key, autumn = false) {
 }
 
 function makeCharacterTexture(scene, key, tunic, hair, accent, cloak = false) {
-  const fw = 24, fh = 32, cols = 3, rows = 4;
-  const texture = scene.textures.createCanvas(key, fw*cols, fh*rows);
-  const ctx = texture.getContext();
-  ctx.imageSmoothingEnabled = false;
+  // Sprite sheet 32x40: silhouette plus lisible, ombrage en aplats et équipement distinctif.
+  const fw=32,fh=40,cols=3,rows=4;
+  const texture=scene.textures.createCanvas(key,fw*cols,fh*rows);
+  const ctx=texture.getContext();
+  ctx.imageSmoothingEnabled=false;
 
-  for (let row=0; row<rows; row++) {
-    for (let frame=0; frame<cols; frame++) {
-      const ox=frame*fw, oy=row*fh;
+  for(let row=0;row<rows;row++){
+    for(let frame=0;frame<cols;frame++){
+      const ox=frame*fw,oy=row*fh;
       const step=frame===0?-1:frame===2?1:0;
-      // Feet and boots.
-      ctx.fillStyle="#2d2928";
-      ctx.fillRect(ox+5+step,oy+27,5,4);
-      ctx.fillRect(ox+14-step,oy+27,5,4);
-      ctx.fillStyle="#8c6545";
-      ctx.fillRect(ox+6+step,oy+27,3,2);
-      ctx.fillRect(ox+15-step,oy+27,3,2);
-      // Legs.
-      ctx.fillStyle="#423a36";
-      ctx.fillRect(ox+7+step,oy+22,4,6);
-      ctx.fillRect(ox+14-step,oy+22,4,6);
-      // Tunic and cloak silhouette.
-      ctx.fillStyle=cloak?"#342b4d":tunic;
-      ctx.fillRect(ox+5,oy+13,14,11);
-      ctx.fillRect(ox+4,oy+16,3,8);
-      ctx.fillRect(ox+17,oy+16,3,8);
-      ctx.fillStyle=accent;
-      ctx.fillRect(ox+7,oy+14,10,2);
-      ctx.fillRect(ox+10,oy+16,4,6);
-      ctx.fillStyle="rgba(18,20,26,.45)";
-      ctx.fillRect(ox+5,oy+22,14,2);
-      // Arms.
-      ctx.fillStyle="#d8aa83";
-      ctx.fillRect(ox+3,oy+16,3,7);ctx.fillRect(ox+18,oy+16,3,7);
-      // Head and neck.
-      ctx.fillStyle="#dcb18c";
-      ctx.fillRect(ox+7,oy+5,10,10);
-      ctx.fillRect(ox+10,oy+13,4,3);
-      // Hair cap and side locks.
-      ctx.fillStyle=hair;
-      ctx.fillRect(ox+6,oy+4,12,5);
-      ctx.fillRect(ox+5,oy+6,3,6);
-      ctx.fillRect(ox+16,oy+7,3,5);
-      if(row===3){ctx.fillRect(ox+7,oy+7,10,5);}
-      // Eyes are only shown when facing down or sideways.
-      if(row!==3){
-        ctx.fillStyle="#302921";
-        ctx.fillRect(ox+(row===1?7:row===2?15:9),oy+10,2,2);
-        if(row===0){ctx.fillRect(ox+14,oy+10,2,2);}
+      const rect=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(ox+x,oy+y,w,h);};
+      // Grounded shadow baked into each frame.
+      ctx.fillStyle="rgba(10,15,13,.35)";
+      ctx.beginPath();ctx.ellipse(ox+16,oy+36,10,3,0,0,Math.PI*2);ctx.fill();
+
+      // Boots, trousers and tunic silhouette.
+      rect(8+step,32,7,5,"#292a2c");rect(18-step,32,7,5,"#292a2c");
+      rect(9+step,32,4,2,"#a17b50");rect(19-step,32,4,2,"#a17b50");
+      rect(10+step,25,5,8,"#39404a");rect(18-step,25,5,8,"#39404a");
+      rect(7,15,18,14,cloak?"#302b49":tunic);
+      rect(5,19,4,9,cloak?"#302b49":tunic);rect(23,19,4,9,cloak?"#302b49":tunic);
+      rect(8,16,16,3,accent);
+      rect(11,19,10,8,cloak?"#493c68":tunic);
+      rect(8,27,16,3,"#392c2a");
+      rect(14,27,4,3,"#e6c77d");
+      // Cloth highlights and dark contour pixels.
+      rect(7,17,2,10,"rgba(255,255,255,.22)");
+      rect(23,17,2,10,"rgba(0,0,0,.2)");
+      rect(9,29,14,2,"rgba(12,14,18,.32)");
+
+      // Arms and hands.
+      rect(4,19,4,8,"#d8a982");rect(24,19,4,8,"#d8a982");
+      rect(4,25,4,3,"#bd8b6d");rect(24,25,4,3,"#bd8b6d");
+
+      // Neck and face.
+      rect(13,12,6,5,"#d8a982");
+      rect(10,6,12,11,"#e0b58f");
+      rect(11,7,10,8,"#efc8a0");
+      // Ears.
+      rect(8,10,3,4,"#c78e70");rect(21,10,3,4,"#c78e70");
+
+      // Hair silhouette varies by facing direction.
+      rect(9,4,14,5,hair);rect(8,6,3,8,hair);rect(21,6,3,8,hair);
+      rect(11,3,10,3,hair);
+      if(row===3){rect(9,5,14,9,hair);rect(11,12,10,3,hair);}
+      else{
+        rect(11,8,2,2,"#302a26");
+        if(row===0)rect(19,8,2,2,"#302a26");
+        rect(13,12,6,1,"#9c5f55");
       }
-      // Belt, buckle and equipment details.
-      ctx.fillStyle="#563a28";ctx.fillRect(ox+6,oy+21,12,2);
-      ctx.fillStyle="#e2c47a";ctx.fillRect(ox+11,oy+21,2,2);
+      // Individual fringe highlights.
+      rect(11,5,4,2,"rgba(255,255,255,.18)");
+      rect(18,6,3,2,"rgba(0,0,0,.18)");
+
+      // Class-specific equipment.
       if(key==="guard"){
-        ctx.fillStyle="#d9dce0";ctx.fillRect(ox+20,oy+13,2,13);
-        ctx.fillStyle="#8a6a3e";ctx.fillRect(ox+19,oy+19,4,2);
+        rect(26,15,3,16,"#c9d2d7");rect(25,21,5,3,"#b88a4b");
+        rect(27,14,2,3,"#f0e0ad");
       }
       if(key==="mage"){
-        ctx.fillStyle="#b9a0ed";ctx.fillRect(ox+4,oy+2,16,2);
-        ctx.fillStyle="#6bd8f0";ctx.fillRect(ox+18,oy+8,3,3);
+        rect(5,3,22,3,"#b9a0ed");rect(7,1,18,3,"#59447f");
+        rect(25,8,3,4,"#7bdcf1");rect(26,9,1,2,"#e8fbff");
       }
       if(key==="merchant"){
-        ctx.fillStyle="#b98642";ctx.fillRect(ox+4,oy+13,16,2);
+        rect(5,15,22,3,"#b98642");rect(8,17,16,2,"#e7ca83");
       }
-      if(frame===1){ctx.fillStyle="rgba(255,255,255,.18)";ctx.fillRect(ox+6,oy+14,2,7);}
+      if(key==="amelie"){
+        rect(10,3,12,3,"#e4bd72");rect(22,7,3,8,hair);
+      }
+      // Directional highlights.
+      if(frame===1)rect(8,17,2,9,"rgba(255,255,255,.14)");
     }
   }
   for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
-    const index=row*cols+col;
-    texture.add(index,0,col*fw,row*fh,fw,fh);
+    texture.add(row*cols+col,0,col*fw,row*fh,fw,fh);
   }
   texture.refresh();
   return texture;
@@ -496,12 +502,12 @@ export function createWorld() {
     const cx=24*TILE+16,cy=18*TILE+16;
     const makeNpc=(key,x,y,tunic,hair,accent,cloak=false)=>{
       makeCharacterTexture(this,key,tunic,hair,accent,cloak);
-      const shadow=this.add.ellipse(x*TILE+16,y*TILE+22,27,10,0x11170f,0.38).setDepth(y*TILE+18);
+      const shadow=this.add.ellipse(x*TILE+16,y*TILE+25,30,11,0x11170f,0.42).setDepth(y*TILE+18);
       const sprite=this.add.sprite(x*TILE+16,y*TILE+12,key,1)
-        .setOrigin(0.5,0.85).setScale(1.55).setDepth(y*TILE+40);
+        .setOrigin(0.5,0.88).setScale(1.38).setDepth(y*TILE+40);
       sprite.setData("shadow",shadow);
       this.physics.add.existing(sprite);
-      sprite.body.setSize(13,9).setOffset(5,21).setCollideWorldBounds(true);
+      sprite.body.setSize(15,10).setOffset(8,27).setCollideWorldBounds(true);
       return sprite;
     };
 
@@ -515,7 +521,7 @@ export function createWorld() {
     [amelie,guard,mage,merchant].forEach(sprite=>{
       npcGroup.add(sprite);
       sprite.body.setImmovable(true);
-      sprite.body.setSize(14,9).setOffset(5,21);
+      sprite.body.setSize(15,10).setOffset(8,27);
     });
 
     // Buildings block the player; NPCs remain approachable.
@@ -584,7 +590,7 @@ export function createWorld() {
     actors.forEach(actor=>{
       actor.setDepth(actor.y+30);
       const shadow=actor.getData("shadow");
-      if(shadow){shadow.setPosition(actor.x,actor.y+20).setDepth(actor.y+18);}
+      if(shadow){shadow.setPosition(actor.x,actor.y+25).setDepth(actor.y+18);}
       const label=actor.getData("label");
       if(label)label.setPosition(actor.x,actor.y-37).setDepth(actor.y+500);
     });
