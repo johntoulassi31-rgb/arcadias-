@@ -549,6 +549,7 @@ export function createWorld() {
       {sprite:mage,zone:{left:30*TILE,top:22*TILE,right:42*TILE,bottom:31*TILE},speed:30,pause:1800,goal:null,next:0,stuck:0,lastX:mage.x,lastY:mage.y,row:0},
       {sprite:merchant,zone:{left:9*TILE,top:12*TILE,right:18*TILE,bottom:21*TILE},speed:25,pause:2200,goal:null,next:0,stuck:0,lastX:merchant.x,lastY:merchant.y,row:0}
     ];
+    this.roamers=roamers;
 
     const npcGroup=this.physics.add.group();
     [amelie,guard,mage,merchant].forEach(sprite=>{
@@ -637,10 +638,11 @@ export function createWorld() {
       agent.next=time+700;
     };
     if(!inside){
-      roamers.forEach(agent=>{
+      (this.roamers||[]).forEach(agent=>{
         const a=agent.sprite;
         if(!a.active||!a.body)return;
         if(!agent.goal&&time>=agent.next)chooseGoal(agent);
+        if(!agent.goal){a.body.setVelocity(0,0);return;}
         const dx=agent.goal.x-a.x,dy=agent.goal.y-a.y;
         const distance=Math.hypot(dx,dy);
         if(distance<9){
