@@ -178,3 +178,4 @@ const requestLandscape=()=>{
 };
 document.querySelector("#game")?.addEventListener("pointerdown",requestLandscape,{once:true});
 load();update();requestAnimationFrame(frame);
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js").catch(error=>console.warn("ARCADIAS offline mode unavailable:",error));});}
