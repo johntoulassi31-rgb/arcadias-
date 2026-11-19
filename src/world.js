@@ -273,7 +273,7 @@ export function createWorld() {
     scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
-      create:function(){
+      create:function initializeScene(){
         try{create.call(this);}
         catch(error){
           console.error("ARCADIAS scene initialization failed:",error);
