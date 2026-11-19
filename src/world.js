@@ -494,7 +494,7 @@ export function createWorld() {
         .setOrigin(0.5,0.88).setScale(1.12).setDepth(y*TILE+40);
       sprite.setData("shadow",shadow);
       this.physics.add.existing(sprite);
-      sprite.body.setSize(15,10).setOffset(8,27).setCollideWorldBounds(true);
+      sprite.body.setSize(18,12).setOffset(15,45).setCollideWorldBounds(true);
       return sprite;
     };
 
@@ -508,7 +508,7 @@ export function createWorld() {
     [amelie,guard,mage,merchant].forEach(sprite=>{
       npcGroup.add(sprite);
       sprite.body.setImmovable(true);
-      sprite.body.setSize(15,10).setOffset(8,27);
+      sprite.body.setSize(18,12).setOffset(15,45);
     });
 
     // Buildings block the player; NPCs remain approachable.
@@ -633,8 +633,7 @@ export function createWorld() {
       g.fillStyle(0x4b3025,1);g.fillRect(15*TILE,11*TILE,7*TILE,2*TILE);
       g.fillStyle(0xe4c27e,1);g.fillRect(15*TILE,11*TILE,7*TILE,3);
       interiorDoor={x:24*TILE+16,y:24*TILE};
-      interiorObjects=[g,scene.add.text(24*TILE+16,9*TILE,"AUBERGE DU DRAGON D’OR",{fontFamily:"Georgia",fontSize:"22px",color:"#ffe0a0",stroke:"#40291e",strokeThickness:5}).setOrigin(.5).setDepth(20)];
-      scene.add.text(24*TILE+16,26*TILE,"SORTIE",{fontFamily:"Georgia",fontSize:"14px",color:"#fff0c4",stroke:"#40291e",strokeThickness:4}).setOrigin(.5).setDepth(20);
+      interiorObjects=[g,scene.add.text(24*TILE+16,9*TILE,"AUBERGE DU DRAGON D’OR",{fontFamily:"Georgia",fontSize:"22px",color:"#ffe0a0",stroke:"#40291e",strokeThickness:5}).setOrigin(.5).setDepth(20),scene.add.text(24*TILE+16,26*TILE,"SORTIE",{fontFamily:"Georgia",fontSize:"14px",color:"#fff0c4",stroke:"#40291e",strokeThickness:4}).setOrigin(.5).setDepth(20)];
       p.setPosition(interiorDoor.x,interiorDoor.y-90);p.body.reset(p.x,p.y);p.body.setCollideWorldBounds(false);
       return true;
     },
