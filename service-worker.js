@@ -1,4 +1,4 @@
-const CACHE_NAME="arcadias-shell-v4";
+const CACHE_NAME="arcadias-shell-v5";
 const APP_SHELL=["./index.html","./styles.css","./icon.svg","./manifest.webmanifest","./src/main.js","./src/world.js","./assets/ardencourt-reference.webp","./assets/asterion-frontier.svg"];
 self.addEventListener("install",event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener("activate",event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith("arcadias-")&&key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
