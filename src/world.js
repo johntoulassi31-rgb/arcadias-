@@ -498,7 +498,7 @@ export function createWorld() {
       const groundX=x*TILE+16,groundY=y*TILE+16;
       const shadow=this.add.ellipse(groundX,groundY+1,27,8,0x11170f,0.42).setDepth(groundY+2);
       const sprite=this.add.sprite(groundX,groundY,key,1)
-        .setOrigin(0.5,0.92).setScale(1.12).setDepth(groundY+30);
+        .setOrigin(0.5,0.92).setScale(1.28).setDepth(groundY+30);
       sprite.setData("shadow",shadow);
       this.physics.add.existing(sprite);
       sprite.body.setSize(18,12).setOffset(15,45).setCollideWorldBounds(true);
@@ -506,6 +506,8 @@ export function createWorld() {
     };
 
     const player=makeNpc("hero",40,34,"#3e5d91","#493126","#d6bd7e");
+    player.setScale(1.58);
+    player.body.setSize(20,14).setOffset(14,43);
     const amelie=makeNpc("amelie",52,28,"#ad527d","#d2a25a","#f1d6a5");
     const guard=makeNpc("guard",40,8,"#52647a","#4a382b","#d8c28a");
     const mage=makeNpc("mage",17,17,"#554078","#352645","#7cc8de",true);
@@ -576,7 +578,7 @@ export function createWorld() {
 
     this.cameras.main.setBounds(0,0,WORLD_W,WORLD_H);
     // Frame the royal square, library, market and palace together.
-    this.cameras.main.setZoom(0.78);
+    this.cameras.main.setZoom(0.98);
     this.cameras.main.startFollow(player,true,0.12,0.12);
 
     const labels=[
@@ -608,13 +610,13 @@ export function createWorld() {
     const p=this.player;
     const d=this.desired||{x:0,y:0};
     const moving=!!(d.x||d.y);
-    const speed=190;
+    const speed=320;
     const length=Math.hypot(d.x,d.y)||1;
     p.body.setVelocity(moving?d.x/length*speed:0,moving?d.y/length*speed:0);
 
     if(moving){
       const row=Math.abs(d.x)>Math.abs(d.y)?(d.x<0?1:2):(d.y<0?3:0);
-      const frame=Math.floor(time/190)%3;
+      const frame=Math.floor(time/135)%3;
       p.setFrame(row*3+frame);
     }else{
       const row=this.lastWalkFrame||0;
