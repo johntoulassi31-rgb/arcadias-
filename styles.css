@@ -263,3 +263,56 @@ html,body,#game{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-
  #psp-pad{--unit:30px!important}
  #chat-panel{height:100px!important}
 }
+
+
+/* ===== ARCADIAS · direction artistique anime / webtoon ===== */
+:root{
+ --anime-ink:#28233d;--anime-night:#171a31;--anime-violet:#8c70c9;
+ --anime-pink:#f1a7c4;--anime-gold:#f4d58a;--anime-paper:#fff2dc;
+ --anime-glass:rgba(27,27,53,.91);
+}
+body{background:#171a31;color:var(--anime-paper);font-family:system-ui,"Trebuchet MS",sans-serif}
+#stage{background:linear-gradient(145deg,#7ba6a1 0%,#416b66 48%,#273c4d 100%)}
+#world3d canvas{image-rendering:auto!important;image-rendering:crisp-edges}
+#mmorpg-hud .player-card,#mmorpg-hud .quest-card,
+#mmorpg-hud .currency,#mmorpg-hud .mini-map,
+#mmorpg-hud .top-menu button,#bottom-dock button,
+#chat-panel,#game-panel,#dialogue{
+ border:2px solid #f2d9a0!important;
+ border-radius:13px!important;
+ background:linear-gradient(145deg,rgba(63,54,91,.96),rgba(25,29,55,.96))!important;
+ box-shadow:0 3px 0 #211d37,0 0 0 2px rgba(255,239,198,.13),0 7px 18px #10142688!important;
+ color:#fff3df!important;
+}
+#mmorpg-hud .player-card:before,#mmorpg-hud .quest-card:before{
+ content:"";position:absolute;inset:4px;border:1px solid rgba(255,226,169,.22);
+ border-radius:8px;pointer-events:none
+}
+.player-name strong,.quest-title,.map-title,.combat-power{ text-shadow:0 1px 2px #171328 }
+.player-name span,.quest-title{color:#ffe19b!important}
+.stat-line{border:1px solid #f7e5c5!important;border-radius:8px!important}
+.hp i{background:linear-gradient(90deg,#ff9baf,#e64d75)!important}
+.mp i{background:linear-gradient(90deg,#8de7ff,#617de5)!important}
+.avatar-frame{border:2px solid #ffe3a5!important;border-radius:12px!important;background:linear-gradient(145deg,#a18bd0,#413d72)!important;overflow:hidden}
+.avatar-art{clip-path:polygon(50% 0,85% 15%,100% 55%,80% 100%,20% 100%,0 55%,15% 15%);filter:drop-shadow(0 2px 2px #171328)}
+.currency{border-radius:18px!important;background:linear-gradient(120deg,#51416f,#272c50)!important}
+.top-menu button{border-radius:12px!important}
+.top-menu button b,#bottom-dock button b{filter:drop-shadow(0 2px 2px #171328)}
+#bottom-dock button{border-radius:15px 15px 10px 10px!important;background:linear-gradient(160deg,#62528b,#292c50)!important}
+#bottom-dock #combat-button{border:3px solid #ffe19b!important;border-radius:50%!important;background:radial-gradient(circle at 35% 25%,#d77c9f,#633f72 65%,#242542)!important;box-shadow:0 0 0 3px #29213d,0 0 18px #f0a4be77!important}
+#chat-toggle{border:2px solid #ffe3a5!important;border-radius:15px!important;background:linear-gradient(145deg,#9a72b9,#41416e)!important;box-shadow:0 4px 0 #29213d,0 7px 16px #10142688!important}
+#chat-panel{border-radius:14px!important}
+.chat-tabs{border-color:#d9b77e!important}
+.chat-tabs b{color:#ffe19b!important}
+.chat-entry input{border:1px solid #d6b77e!important;border-radius:10px!important;background:#191d38!important}
+.chat-entry button,#dialogue-next,.panel-action{border:1px solid #ffe0a0!important;border-radius:10px!important;background:linear-gradient(145deg,#9b6d9e,#514476)!important;color:#fff4e3!important}
+#dialogue,#game-panel{border:2px solid #f7dca3!important;border-radius:17px!important;background:linear-gradient(145deg,rgba(59,48,85,.98),rgba(24,28,52,.98))!important;box-shadow:0 0 0 3px #28213e,0 12px 35px #090d1dcc!important}
+#dialogue .dialogue-heading{color:#ffe5a9}
+#dialogue p,#panel-content{line-height:1.55}
+#game-toast{border:1px solid #ffe3a5;border-radius:12px;background:rgba(42,37,69,.94);box-shadow:0 4px 15px #11152a99}
+.direction{border:2px solid #f5dba7!important;border-radius:13px!important;background:linear-gradient(145deg,#6e6196,#34365c)!important;box-shadow:0 3px 0 #201d38!important}
+.direction:active,#bottom-dock button:active,.top-menu button:active{filter:brightness(1.2) saturate(1.15)}
+#interact{border:2px solid #ffe3a5!important;border-radius:14px!important;background:linear-gradient(145deg,#a46f9f,#514475)!important;color:#fff5e7!important;box-shadow:0 4px 0 #29213d!important}
+@media(max-width:600px){
+ .player-card,.quest-card,.currency,.mini-map,.top-menu button,#bottom-dock button{border-width:1px!important}
+}
