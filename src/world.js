@@ -621,7 +621,7 @@ export function createWorld() {
     const p=this.player;
     const d=this.desired||{x:0,y:0};
     const moving=!!(d.x||d.y);
-    const speed=112;
+    const speed=190;
     const length=Math.hypot(d.x,d.y)||1;
     p.body.setVelocity(moving?d.x/length*speed:0,moving?d.y/length*speed:0);
 
@@ -651,7 +651,9 @@ export function createWorld() {
       agent.next=time+700;
     };
     if(!inside){
-      (this.roamers||[]).forEach(agent=>{
+      if(this.pauseNpcMovement){
+        (this.roamers||[]).forEach(agent=>agent.sprite.body?.setVelocity(0,0));
+      } else (this.roamers||[]).forEach(agent=>{
         const a=agent.sprite;
         if(!a.active||!a.body)return;
         if(!agent.goal&&time>=agent.next)chooseGoal(agent);
@@ -689,6 +691,12 @@ export function createWorld() {
   }
 
   return {
+    pauseNpcMovement(paused){
+      if(!sceneRef)return false;
+      sceneRef.pauseNpcMovement=!!paused;
+      if(paused)(sceneRef.roamers||[]).forEach(agent=>agent.sprite.body?.setVelocity(0,0));
+      return true;
+    },
     move(dx,dy){
       if(!sceneRef)return false;
       const x=Number.isFinite(dx)?dx:0;
