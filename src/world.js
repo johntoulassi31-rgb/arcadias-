@@ -476,6 +476,11 @@ export function createWorld() {
     addHouse(this,8,13,"house-1",1,false);
     addHouse(this,68,43,"house-2",2,false);
     addHouse(this,8,43,"house-0",0,false);
+    // Étals du marché royal, placés sur les bords de la place.
+    addMarketStall(this,790,760,0x9b3f43,0xe5c47e);
+    addMarketStall(this,1770,760,0x315b78,0xd9c28d);
+    addMarketStall(this,790,1190,0x557447,0xe4d4a7);
+    addProps(this);
     const treePositions=[[18,8],[27,8],[51,8],[60,8],[18,49],[27,49],[51,49],[60,49],[4,25],[4,35],[75,25],[75,35],[18,18],[60,18],[18,39],[60,39]];
     treePositions.forEach(([tx,ty],i)=>{
       const x=tx*TILE+16,y=ty*TILE+16;
@@ -530,6 +535,17 @@ export function createWorld() {
       obstacles.add(block);
       block.body.setSize(w,h);
     };
+    // Jardinières et massifs : leurs bordures sont solides.
+    [[750,556,300,18],[1810,556,300,18],[750,1356,300,18],[1810,1356,300,18],
+     [555,830,18,260],[2005,830,18,260]]
+      .forEach(([x,y,w,h])=>addObstacle(x,y,w,h));
+    // Étals du marché et comptoirs : collision sur les structures, passage devant.
+    [[790,752,88,34],[1770,752,88,34],[790,1182,88,34]]
+      .forEach(([x,y,w,h])=>addObstacle(x,y,w,h));
+    // Bancs et caisses ajoutés par addProps.
+    [[644,401,34,22],[1028,817,34,22],[1268,593,34,22],[644,657,34,22],
+     [577,401,42,26],[961,785,42,26]]
+      .forEach(([x,y,w,h])=>addObstacle(x,y,w,h));
     // Collision du bassin central : anneau solide, passage libre tout autour.
     addObstacle(1280,960,250,112);
     // Les troncs des arbres bloquent le passage, pas leur feuillage.
