@@ -31,6 +31,7 @@ const lines=[
 function toastMessage(s){toast.textContent=s;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2000)}
 function blocked(){hint.classList.add("visible");clearTimeout(hintTimer);hintTimer=setTimeout(()=>hint.classList.remove("visible"),550)}
 function syncHeld(){
+ if(!dialogue.hidden){keyboardHeld.clear();activePointers.clear();held.clear();game.move(0,0);update();return;}
  held.clear();
  keyboardHeld.forEach(d=>held.add(d));
  activePointers.forEach(d=>held.add(d));
@@ -99,6 +100,7 @@ interactButton.addEventListener("click",()=>{
  if(game.nearAmelie()||game.nearInnkeeper())openDialogue();
 });
 function openDialogue(){
+ releaseAll();game.pauseNpcMovement(true);
  activeNpc=true;dialogueStep=0;
  const inside=game.insideBuilding;
  const speech=inside?["Bienvenue au Dragon d Or ! Installe-toi près du feu, voyageur.","Les routes vers Lyon sont longues. Une vieille librairie y cacherait un secret.","Tu peux consulter le tableau des contrats près du comptoir."]:lines;
@@ -111,19 +113,11 @@ document.querySelector("#dialogue-next").addEventListener("click",()=>{
  const speech=JSON.parse(dialogue.dataset.speech||"[]");
  if(dialogueStep>=speech.length){
   if(!state.quest){state.quest=1;toastMessage("Quête ajoutée : Le secret de la librairie");save()}
-  dialogue.hidden=true;activeNpc=null;update();return;
+  dialogue.hidden=true;activeNpc=null;game.pauseNpcMovement(false);releaseAll();update();return;
  }
  dialogueText.textContent=speech[dialogueStep];
 });
-document.querySelector("#dialogue-close").addEventListener("click",()=>{dialogue.hidden=true;activeNpc=null;update()});
-interactButton.addEventListener("click",()=>{
- if(game.nearDoor()){
-  if(game.insideBuilding){game.exitInterior();toastMessage("Tu es sorti de l auberge.");}
-  else{game.enterInterior();toastMessage("Bienvenue au Dragon d Or.");}
-  update();return;
- }
- openDialogue();
-});
+document.querySelector("#dialogue-close").addEventListener("click",()=>{dialogue.hidden=true;activeNpc=null;game.pauseNpcMovement(false);releaseAll();update()});
 function save(){try{localStorage.setItem("arcadias-3d-save",JSON.stringify(state));toastMessage("Progression sauvegardée.")}catch{toastMessage("Sauvegarde impossible.")}}
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem("arcadias-3d-save")||"{}"))}catch{}}
 function panel(kind){
@@ -167,7 +161,7 @@ document.querySelector("#panel-content").addEventListener("click",e=>{
 function frame(t){
  const dt=Math.min(.05,(t-(last||t))/1000);last=t;
  let x=0,z=0;for(const d of held){x+=vectors[d][0];z+=vectors[d][1]}
- if(x||z){
+ if((x||z)&&dialogue.hidden){
   const moved=game.move(x,z,dt);
   if(!moved)blocked();
  }
