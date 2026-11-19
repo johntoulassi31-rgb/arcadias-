@@ -694,6 +694,9 @@ export function createWorld() {
       const n=sceneRef.npcs.amelie;
       return Phaser.Math.Distance.Between(sceneRef.player.x,sceneRef.player.y,n.x,n.y)<76;
     },
+    nearGuard(){return !!sceneRef?.player&&Phaser.Math.Distance.Between(sceneRef.player.x,sceneRef.player.y,sceneRef.npcs.guard.x,sceneRef.npcs.guard.y)<76;},
+    nearMage(){return !!sceneRef?.player&&Phaser.Math.Distance.Between(sceneRef.player.x,sceneRef.player.y,sceneRef.npcs.mage.x,sceneRef.npcs.mage.y)<76;},
+    nearMerchant(){return !!sceneRef?.player&&Phaser.Math.Distance.Between(sceneRef.player.x,sceneRef.player.y,sceneRef.npcs.merchant.x,sceneRef.npcs.merchant.y)<76;},
     nearDoor(){
       if(!sceneRef?.player)return false;
       const door=inside?interiorDoor:tavernDoor;
