@@ -19,7 +19,14 @@ const lines=[
 function toastMessage(s){toast.textContent=s;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2000)}
 function blocked(){hint.classList.add("visible");clearTimeout(hintTimer);hintTimer=setTimeout(()=>hint.classList.remove("visible"),550)}
 function syncHeld(){
- held.clear();keyboardHeld.forEach(d=>held.add(d));activePointers.forEach(d=>held.add(d));update();
+ held.clear();
+ keyboardHeld.forEach(d=>held.add(d));
+ activePointers.forEach(d=>held.add(d));
+ // Transmettre aussi le vecteur nul : relâcher une touche doit arrêter le héros immédiatement.
+ let x=0,y=0;
+ for(const d of held){x+=vectors[d][0];y+=vectors[d][1];}
+ game.move(x,y);
+ update();
 }
 function update(){
  const labels={up:"Haut",down:"Bas",left:"Gauche",right:"Droite"};
