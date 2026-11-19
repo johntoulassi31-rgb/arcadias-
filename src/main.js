@@ -90,6 +90,14 @@ window.addEventListener("blur",releaseAll);
 window.addEventListener("pagehide",releaseAll);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)releaseAll()});
 document.addEventListener("touchcancel",releaseAll,{passive:true});
+interactButton.addEventListener("click",()=>{
+ if(game.nearDoor()){
+  if(game.insideBuilding){game.exitInterior();toastMessage("Vous quittez l’auberge.");}
+  else{game.enterInterior();toastMessage("Auberge du Dragon d’Or");}
+  releaseAll();update();return;
+ }
+ if(game.nearAmelie()||game.nearInnkeeper())openDialogue();
+});
 function openDialogue(){
  activeNpc=true;dialogueStep=0;
  const inside=game.insideBuilding;
