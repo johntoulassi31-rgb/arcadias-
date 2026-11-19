@@ -274,7 +274,7 @@ export function createWorld() {
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
       preload:function loadArtwork(){
-        this.load.svg("ardencourt-art","./assets/ardencourt-world.svg",{width:2560,height:1920});
+        this.load.image("ardencourt-art","./assets/ardencourt-reference.webp");
         this.load.svg("frontier-art","./assets/asterion-frontier.svg",{width:2560,height:1920});
       },
       create:function initializeScene(){
@@ -298,8 +298,9 @@ export function createWorld() {
 
   function drawGround(scene) {
     // Grande illustration isométrique de la capitale, utilisée comme décor du monde.
+    scene.add.rectangle(1280,960,2560,1920,0xb5aa91).setDepth(-21);
     const artwork=scene.add.image(0,0,"ardencourt-art")
-      .setOrigin(0,0).setDisplaySize(WORLD_W,WORLD_H).setDepth(-20);
+      .setOrigin(0,0).setDisplaySize(2560,1707).setDepth(-20);
     artwork.setData("region","Ardencourt");
     const frontier=scene.add.image(2560,0,"frontier-art")
       .setOrigin(0,0).setDisplaySize(2560,1920).setDepth(-19);
@@ -426,7 +427,7 @@ export function createWorld() {
 
     // Les bâtiments et jardins sont intégrés dans l'illustration détaillée.
     // Les portes restent interactives et les collisions sont gérées séparément.
-    tavernDoor={x:1485,y:700};
+    tavernDoor={x:2315,y:585};
 
     const cx=24*TILE+16,cy=18*TILE+16;
     const makeNpc=(key,x,y,tunic,hair,accent,cloak=false)=>{
@@ -443,18 +444,18 @@ export function createWorld() {
       return sprite;
     };
 
-    const player=makeNpc("hero",24,23,"#3e5d91","#493126","#d6bd7e");
-    const amelie=makeNpc("amelie",25,21,"#ad527d","#d2a25a","#f1d6a5");
-    const guard=makeNpc("guard",39,14,"#52647a","#4a382b","#d8c28a");
-    const mage=makeNpc("mage",37,24,"#554078","#352645","#7cc8de",true);
-    const merchant=makeNpc("merchant",12,16,"#b47b42","#63412d","#e4c27c");
+    const player=makeNpc("hero",40,34,"#3e5d91","#493126","#d6bd7e");
+    const amelie=makeNpc("amelie",52,28,"#ad527d","#d2a25a","#f1d6a5");
+    const guard=makeNpc("guard",40,8,"#52647a","#4a382b","#d8c28a");
+    const mage=makeNpc("mage",17,17,"#554078","#352645","#7cc8de",true);
+    const merchant=makeNpc("merchant",6,17,"#b47b42","#63412d","#e4c27c");
 
     // Chaque habitant possède son propre secteur, sa vitesse et ses pauses.
     const roamers=[
-      {sprite:amelie,zone:{left:18*TILE,top:13*TILE,right:30*TILE,bottom:23*TILE},speed:42,pause:900,goal:null,next:0,stuck:0,lastX:amelie.x,lastY:amelie.y,row:0},
-      {sprite:guard,zone:{left:36*TILE,top:11*TILE,right:43*TILE,bottom:22*TILE},speed:34,pause:1400,goal:null,next:0,stuck:0,lastX:guard.x,lastY:guard.y,row:0},
-      {sprite:mage,zone:{left:30*TILE,top:22*TILE,right:42*TILE,bottom:31*TILE},speed:30,pause:1800,goal:null,next:0,stuck:0,lastX:mage.x,lastY:mage.y,row:0},
-      {sprite:merchant,zone:{left:9*TILE,top:12*TILE,right:18*TILE,bottom:21*TILE},speed:25,pause:2200,goal:null,next:0,stuck:0,lastX:merchant.x,lastY:merchant.y,row:0}
+      {sprite:amelie,zone:{left:49*TILE,top:25*TILE,right:57*TILE,bottom:32*TILE},speed:42,pause:900,goal:null,next:0,stuck:0,lastX:amelie.x,lastY:amelie.y,row:0},
+      {sprite:guard,zone:{left:37*TILE,top:6*TILE,right:48*TILE,bottom:13*TILE},speed:34,pause:1400,goal:null,next:0,stuck:0,lastX:guard.x,lastY:guard.y,row:0},
+      {sprite:mage,zone:{left:13*TILE,top:14*TILE,right:23*TILE,bottom:22*TILE},speed:30,pause:1800,goal:null,next:0,stuck:0,lastX:mage.x,lastY:mage.y,row:0},
+      {sprite:merchant,zone:{left:3*TILE,top:14*TILE,right:11*TILE,bottom:22*TILE},speed:25,pause:2200,goal:null,next:0,stuck:0,lastX:merchant.x,lastY:merchant.y,row:0}
     ];
     this.roamers=roamers;
 
@@ -475,13 +476,14 @@ export function createWorld() {
       obstacles.add(block);
       block.body.setSize(w,h);
     };
-    // Les deux segments du rempart bloquent les côtés, mais la porte reste franchissable.
-    addObstacle(46*TILE,8*TILE,64,13*TILE);
-    addObstacle(46*TILE,27*TILE,64,13*TILE);
-    // Façades du palais, de la bibliothèque et de la taverne.
-    addObstacle(840,150,470,210);
-    addObstacle(275,560,340,210);
-    addObstacle(1485,575,340,220);
+    // Collisions approximatives des bâtiments et du bassin central d’Ardencourt.
+    addObstacle(1280,78,1120,135);
+    addObstacle(270,185,470,210);
+    addObstacle(2390,475,300,340);
+    addObstacle(1280,720,350,58);
+    addObstacle(1088,850,58,250);
+    addObstacle(1472,850,58,250);
+    addObstacle(1280,1035,350,48);
     // Arbres, colonnes en ruine et eau du Lac d’Azur dans les nouvelles régions.
     const frontierX=2560;
     [[130,120],[410,120],[610,80],[990,80],[900,470],[250,540],[690,560],
