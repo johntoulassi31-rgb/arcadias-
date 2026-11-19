@@ -267,9 +267,9 @@ export function createWorld() {
     width:parent?.clientWidth||window.innerWidth,
     height:parent?.clientHeight||window.innerHeight,
     backgroundColor:"#477d43",
-    pixelArt:true,
-    antialias:false,
-    roundPixels:true,
+    pixelArt:false,
+    antialias:true,
+    roundPixels:false,
     scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
@@ -418,12 +418,7 @@ export function createWorld() {
     this.physics.world.setBounds(0,0,WORLD_W,WORLD_H);
     drawGround(this);
 
-    // Create original, reusable hand-drawn pixel-art building and nature textures.
-    makeHouseTexture(this,"house-plaster",0);
-    makeHouseTexture(this,"house-slate",1);
-    makeHouseTexture(this,"house-oak",2);
-    makeTreeTexture(this,"tree-green",false);
-    makeTreeTexture(this,"tree-autumn",true);
+    // The detailed illustrated city is loaded as a single optimized SVG backdrop.
 
     // Les bâtiments et jardins sont intégrés dans l'illustration détaillée.
     // Les portes restent interactives et les collisions sont gérées séparément.
@@ -490,7 +485,8 @@ export function createWorld() {
     this.physics.add.collider(npcGroup,npcGroup);
 
     this.cameras.main.setBounds(0,0,WORLD_W,WORLD_H);
-    this.cameras.main.setZoom(1.32);
+    // Frame the royal square, library, market and palace together.
+    this.cameras.main.setZoom(0.78);
     this.cameras.main.startFollow(player,true,0.12,0.12);
 
     const labels=[
