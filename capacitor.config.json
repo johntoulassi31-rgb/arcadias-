@@ -1,0 +1,11 @@
+{
+  "appId": "com.arcadias.asterion",
+  "appName": "ARCADIAS",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
