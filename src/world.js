@@ -167,53 +167,83 @@ function makeTreeTexture(scene, key, autumn = false) {
 }
 
 function makeCharacterTexture(scene,key,tunic,hair,accent,cloak=false) {
-  // Personnages anime : grands yeux expressifs, mèches en volume et vêtements ombrés.
+  // Sprite chibi anime : tête volontairement surdimensionnée, petit corps et
+  // contours nets pour rester lisible sur écran mobile.
   const fw=48,fh=64,cols=3,rows=4;
   const texture=scene.textures.createCanvas(key,fw*cols,fh*rows);
   const ctx=texture.getContext();ctx.imageSmoothingEnabled=true;
-  const rr=(x,y,w,h,r,color,stroke)=>{ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}};
+  const rr=(x,y,w,h,r,color,stroke="#30283a",lw=1.6)=>{
+    ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}
+  };
+  const ellipse=(x,y,rx,ry,color,stroke=null,lw=1)=>{
+    ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}
+  };
   for(let row=0;row<rows;row++)for(let frame=0;frame<cols;frame++){
     const ox=frame*fw,oy=row*fh;ctx.save();ctx.translate(ox,oy);
     const step=frame===0?-1:frame===2?1:0;
-    ctx.fillStyle="rgba(8,13,24,.28)";ctx.beginPath();ctx.ellipse(24,59,14,4,0,0,Math.PI*2);ctx.fill();
-    // legs and boots
-    rr(13+step,43,9,14,4,"#30384d");rr(26-step,43,9,14,4,"#30384d");
-    rr(11+step,54,12,6,3,"#242638");rr(25-step,54,12,6,3,"#242638");
-    // coat / tunic with anime cel-shading
-    rr(9,27,30,22,8,cloak?"#302c50":tunic,"#29243a");
-    ctx.fillStyle=accent;ctx.beginPath();ctx.moveTo(12,29);ctx.lineTo(24,37);ctx.lineTo(36,29);ctx.lineTo(32,46);ctx.lineTo(16,46);ctx.closePath();ctx.fill();
-    ctx.fillStyle="rgba(255,255,255,.25)";ctx.beginPath();ctx.moveTo(12,30);ctx.lineTo(18,31);ctx.lineTo(17,47);ctx.lineTo(11,44);ctx.fill();
-    rr(21,36,6,12,2,"#e6d3b0");rr(22,39,4,4,1,"#d7ae63");
-    // arms and hands
-    rr(5,30,7,17,4,cloak?"#383154":tunic);rr(36,30,7,17,4,cloak?"#383154":tunic);
-    rr(6,44,6,7,3,"#e6b99b");rr(36,44,6,7,3,"#e6b99b");
-    // neck and face
-    rr(19,22,10,9,3,"#e6b99b");
-    ctx.fillStyle="#e9bfa1";ctx.beginPath();ctx.ellipse(24,17,12,14,0,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#a96862";ctx.lineWidth=1;ctx.stroke();
-    // hair silhouette with directional fringe
-    ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(12,20);ctx.quadraticCurveTo(7,2,24,3);ctx.quadraticCurveTo(42,1,37,22);ctx.lineTo(34,28);ctx.quadraticCurveTo(31,19,29,15);ctx.quadraticCurveTo(22,24,15,17);ctx.lineTo(13,29);ctx.closePath();ctx.fill();
-    ctx.fillStyle="rgba(255,255,255,.24)";ctx.beginPath();ctx.moveTo(15,8);ctx.quadraticCurveTo(23,2,31,7);ctx.quadraticCurveTo(23,6,18,14);ctx.fill();
-    if(row===3){ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(12,12);ctx.quadraticCurveTo(7,28,13,36);ctx.lineTo(17,27);ctx.lineTo(18,15);ctx.fill();ctx.beginPath();ctx.moveTo(34,12);ctx.quadraticCurveTo(42,27,35,36);ctx.lineTo(31,26);ctx.fill();}
-    // eyes, highlights, brows and mouth
-    if(row!==3){
-      ctx.fillStyle="#382a35";ctx.fillRect(16,17,5,1.5);ctx.fillRect(27,17,5,1.5);
-      ctx.fillStyle=key==="amelie"?"#7b557d":"#416b8c";
-      ctx.beginPath();ctx.ellipse(18.5,20,2.5,3.5,0,0,Math.PI*2);ctx.ellipse(29.5,20,2.5,3.5,0,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(19.2,18.8,1,0,Math.PI*2);ctx.arc(30.2,18.8,1,0,Math.PI*2);ctx.fill();
-      ctx.strokeStyle="#a45f65";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(22,26);ctx.quadraticCurveTo(24,27,26,26);ctx.stroke();
+    // Ombre douce au sol et mini-bottes.
+    ellipse(24,58,13,3.5,"rgba(22,22,39,.28)");
+    rr(15+step,47,8,9,3,"#394057");
+    rr(25-step,47,8,9,3,"#394057");
+    rr(13+step,53,11,6,3,"#25283c");
+    rr(24-step,53,11,6,3,"#25283c");
+    // Petit corps chibi, veste et col contrasté.
+    rr(13,34,22,17,7,cloak?"#34304f":tunic,"#282338",2);
+    polygon(ctx,[[16,35],[24,41],[32,35],[30,49],[18,49]],accent,"#3a2b3b",1);
+    rr(21,40,6,10,2,"#f1dfc4","#9b765d",1);
+    rr(8,36,8,12,4,cloak?"#3a3558":tunic);
+    rr(32,36,8,12,4,cloak?"#3a3558":tunic);
+    ellipse(12,48,3.3,3.7,"#f0c4a9","#8c5d59",.8);
+    ellipse(36,48,3.3,3.7,"#f0c4a9","#8c5d59",.8);
+    // Tête large et joues rosées.
+    rr(19,29,10,8,3,"#efc3a7","#a86e65",1);
+    ellipse(24,19,15,16,"#f4cdb2","#392b3a",2);
+    // Chevelure en volume, avec reflets façon illustration webtoon.
+    ctx.fillStyle=hair;ctx.strokeStyle="#302638";ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(9,20);ctx.quadraticCurveTo(5,2,23,2);
+    ctx.quadraticCurveTo(42,0,39,20);ctx.lineTo(36,29);
+    ctx.quadraticCurveTo(31,20,29,15);ctx.quadraticCurveTo(23,25,16,17);
+    ctx.lineTo(12,29);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle="rgba(255,255,255,.28)";
+    ctx.beginPath();ctx.moveTo(13,11);ctx.quadraticCurveTo(22,1,32,8);
+    ctx.quadraticCurveTo(23,6,17,17);ctx.closePath();ctx.fill();
+    if(row===3){
+      ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(11,13);
+      ctx.quadraticCurveTo(7,29,14,37);ctx.lineTo(18,26);ctx.fill();
+      ctx.beginPath();ctx.moveTo(37,13);ctx.quadraticCurveTo(42,29,34,37);
+      ctx.lineTo(30,26);ctx.fill();
     }
-    // signature accessories
-    if(key==="guard"){rr(38,26,4,24,2,"#cbd5df");rr(36,24,8,4,2,"#d4b56f");}
-    if(key==="mage"){rr(7,7,34,5,2,"#584477");rr(38,17,5,7,2,"#80dff5");}
-    if(key==="merchant"){rr(9,28,30,4,2,"#e6c17b");}
-    if(key==="amelie"){ctx.fillStyle="#f2d38b";ctx.beginPath();ctx.arc(36,26,3,0,Math.PI*2);ctx.fill();}
+    // Yeux brillants et expressifs, sauf pour la vue arrière.
+    if(row!==3){
+      ctx.strokeStyle="#382538";ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(14,17);ctx.quadraticCurveTo(18,14,22,17);
+      ctx.moveTo(26,17);ctx.quadraticCurveTo(30,14,34,17);ctx.stroke();
+      const iris=key==="amelie"?"#9a5d9b":key==="mage"?"#6b91d7":"#4d83a7";
+      ellipse(18.5,21,3.1,4.4,"#fff");
+      ellipse(29.5,21,3.1,4.4,"#fff");
+      ellipse(18.8,21,2.35,3.5,iris);
+      ellipse(29.8,21,2.35,3.5,iris);
+      ellipse(19.4,19.6,.9,1.2,"#fff");
+      ellipse(30.4,19.6,.9,1.2,"#fff");
+      // Reflets de joues et petit sourire.
+      ellipse(12.5,26,2.2,1.1,"rgba(239,130,143,.38)");
+      ellipse(35.5,26,2.2,1.1,"rgba(239,130,143,.38)");
+      ctx.strokeStyle="#a45f69";ctx.lineWidth=1.1;
+      ctx.beginPath();ctx.moveTo(22,28);ctx.quadraticCurveTo(24,30,26,28);ctx.stroke();
+    }
+    // Accessoires distinctifs des rôles.
+    if(key==="guard"){rr(37,35,4,18,2,"#d8e1ec","#5b5360",1);rr(35,33,8,4,2,"#e4c579");}
+    if(key==="mage"){rr(7,8,34,5,2,"#594477");ellipse(39,22,3,4,"#8ce8ff");}
+    if(key==="merchant"){rr(12,35,24,4,2,"#e8c779");}
+    if(key==="amelie"){ellipse(36,31,3,3,"#f4d58c","#805a55",.8);}
     ctx.restore();
   }
-  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++)texture.add(row*cols+col,0,col*fw,row*fh,fw,fh);
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++)
+    texture.add(row*cols+col,0,col*fw,row*fh,fw,fh);
   texture.refresh();return texture;
 }
-
 export function createWorld() {
   let sceneRef=null;
   let inside=false;
