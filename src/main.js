@@ -21,7 +21,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&chatPanel?.classLis
  chatToggle?.setAttribute("aria-expanded","false");chatToggle?.classList.remove("active");
 }});
 const dialogueText=document.querySelector("#dialogue-text"),toast=document.querySelector("#game-toast");
-const state={hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15,mount:null,familiar:null,combat:false};
+const state={hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15,mount:null,familiar:null,combat:false,energy:82,hunger:24,social:46,hygiene:78,fun:63,relationships:{amelie:10,guard:0,mage:0,merchant:0}};
 let activeNpc=null,dialogueStep=0,last=0,toastTimer=0,hintTimer=0;
 const lines=[
  "Bonjour, voyageur. Bienvenue à Ardencourt ! Je suis Amélie, la guide de cette cité.",
@@ -122,7 +122,7 @@ function save(){try{localStorage.setItem("arcadias-3d-save",JSON.stringify(state
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem("arcadias-3d-save")||"{}"))}catch{}}
 function panel(kind){
  const views={
- character:["Personnage",`<p>Niveau ${state.level} · Aventurier</p><p>PV : ${state.hp}/820</p><p>PM : ${state.mp}/220</p><p>Or : ${state.gold.toLocaleString("fr-FR")}</p>`],
+ character:["Personnage",`<p>Niveau ${state.level} · Aventurier</p><p>PV : ${state.hp}/820</p><p>PM : ${state.mp}/220</p><p>Or : ${state.gold.toLocaleString("fr-FR")}</p><h3>Vie quotidienne</h3><p>Énergie : ${state.energy}% · Faim : ${state.hunger}%</p><p>Social : ${state.social}% · Hygiène : ${state.hygiene}% · Loisirs : ${state.fun}%</p><p>Relation avec Amélie : ${state.relationships.amelie}%</p><button class="panel-action" data-action="daily-rest">Se reposer</button><button class="panel-action" data-action="daily-eat">Prendre un repas</button><button class="panel-action" data-action="daily-social">Discuter</button><button class="panel-action" data-action="daily-fun">Se divertir</button><button class="panel-action" data-action="daily-wash">Se laver</button>`],
  inventory:["Inventaire",`<ul>${state.inventory.map(x=>"<li>"+x+"</li>").join("")}</ul>`],
  quests:["Quêtes",state.quest?'<p><strong>Le secret de la librairie</strong><br>Retrouver la librairie à Lyon.</p>':'<p>Parle à Amélie sur la place.</p>'],
  map:["Carte",'<p><strong>Ardencourt — capitale royale</strong></p><p>Place centrale · Fontaine des fondateurs · Porte du royaume.</p><p>Coordonnées : 128, 64</p>'],
@@ -148,6 +148,11 @@ document.querySelector("#combat-button").addEventListener("click",()=>panel("com
 document.querySelector("#panel-content").addEventListener("click",e=>{
  const b=e.target.closest("[data-action]");if(!b)return;
  switch(b.dataset.action){
+  case "daily-rest":state.energy=Math.min(100,state.energy+25);toastMessage("Repos terminé : énergie restaurée.");panel("character");break;
+  case "daily-eat":state.hunger=Math.max(0,state.hunger-30);toastMessage("Repas pris : la faim diminue.");panel("character");break;
+  case "daily-social":state.social=Math.min(100,state.social+15);state.relationships.amelie=Math.min(100,state.relationships.amelie+5);toastMessage("Discussion : votre relation progresse.");panel("character");break;
+  case "daily-fun":state.fun=Math.min(100,state.fun+20);toastMessage("Vous avez pris du bon temps.");panel("character");break;
+  case "daily-wash":state.hygiene=Math.min(100,state.hygiene+30);toastMessage("Vous êtes maintenant propre.");panel("character");break;
   case "mount-equip":state.mount="Cheval d’Ardencourt";toastMessage("Monture équipée.");panel("mount");break;
   case "mount-off":state.mount=null;toastMessage("Monture rangée.");panel("mount");break;
   case "familiar-summon":state.familiar="Petit esprit-loup";toastMessage("Ton familier te rejoint.");panel("familiars");break;
