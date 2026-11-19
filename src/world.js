@@ -527,9 +527,12 @@ export function createWorld() {
     const cx=24*TILE+16,cy=18*TILE+16;
     const makeNpc=(key,x,y,tunic,hair,accent,cloak=false)=>{
       makeCharacterTexture(this,key,tunic,hair,accent,cloak);
-      const shadow=this.add.ellipse(x*TILE+16,y*TILE+25,30,11,0x11170f,0.42).setDepth(y*TILE+18);
-      const sprite=this.add.sprite(x*TILE+16,y*TILE+12,key,1)
-        .setOrigin(0.5,0.88).setScale(1.12).setDepth(y*TILE+40);
+      // The sprite position is its ground-contact point: align the soles
+      // with the floor instead of anchoring the character around its torso.
+      const groundX=x*TILE+16,groundY=y*TILE+16;
+      const shadow=this.add.ellipse(groundX,groundY+1,27,8,0x11170f,0.42).setDepth(groundY+2);
+      const sprite=this.add.sprite(groundX,groundY,key,1)
+        .setOrigin(0.5,0.92).setScale(1.12).setDepth(groundY+30);
       sprite.setData("shadow",shadow);
       this.physics.add.existing(sprite);
       sprite.body.setSize(18,12).setOffset(15,45).setCollideWorldBounds(true);
@@ -669,7 +672,7 @@ export function createWorld() {
     actors.forEach(actor=>{
       actor.setDepth(actor.y+30);
       const shadow=actor.getData("shadow");
-      if(shadow){shadow.setPosition(actor.x,actor.y+25).setDepth(actor.y+18);}
+      if(shadow){shadow.setPosition(actor.x,actor.y+1).setDepth(actor.y+2);}
       const label=actor.getData("label");
       if(label)label.setPosition(actor.x,actor.y-37).setDepth(actor.y+500);
     });
