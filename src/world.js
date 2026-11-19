@@ -504,6 +504,14 @@ export function createWorld() {
     const mage=makeNpc("mage",37,24,"#554078","#352645","#7cc8de",true);
     const merchant=makeNpc("merchant",12,16,"#b47b42","#63412d","#e4c27c");
 
+    // Chaque habitant possède son propre secteur, sa vitesse et ses pauses.
+    const roamers=[
+      {sprite:amelie,zone:{left:18*TILE,top:13*TILE,right:30*TILE,bottom:23*TILE},speed:42,pause:900,goal:null,next:0,stuck:0,lastX:amelie.x,lastY:amelie.y,row:0},
+      {sprite:guard,zone:{left:36*TILE,top:11*TILE,right:43*TILE,bottom:22*TILE},speed:34,pause:1400,goal:null,next:0,stuck:0,lastX:guard.x,lastY:guard.y,row:0},
+      {sprite:mage,zone:{left:30*TILE,top:22*TILE,right:42*TILE,bottom:31*TILE},speed:30,pause:1800,goal:null,next:0,stuck:0,lastX:mage.x,lastY:mage.y,row:0},
+      {sprite:merchant,zone:{left:9*TILE,top:12*TILE,right:18*TILE,bottom:21*TILE},speed:25,pause:2200,goal:null,next:0,stuck:0,lastX:merchant.x,lastY:merchant.y,row:0}
+    ];
+
     const npcGroup=this.physics.add.group();
     [amelie,guard,mage,merchant].forEach(sprite=>{
       npcGroup.add(sprite);
@@ -523,6 +531,10 @@ export function createWorld() {
     };
     addObstacle(46*TILE,18*TILE,50,WORLD_H);
     this.physics.add.collider(player,obstacles);
+    // PNJ respectent les bâtiments, les limites et les obstacles du village.
+    this.physics.add.collider(npcGroup,houseBodies);
+    this.physics.add.collider(npcGroup,obstacles);
+    this.physics.add.collider(npcGroup,npcGroup);
 
     this.cameras.main.setBounds(0,0,WORLD_W,WORLD_H);
     this.cameras.main.setZoom(1.32);
@@ -552,7 +564,7 @@ export function createWorld() {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{sceneRef=null;});
   }
 
-  function update(time) {
+  function update(time,delta=16) {
     if(!this.player||!this.player.body)return;
     const p=this.player;
     const d=this.desired||{x:0,y:0};
@@ -571,6 +583,46 @@ export function createWorld() {
     }
     if(moving){
       this.lastWalkFrame=Math.abs(d.x)>Math.abs(d.y)?(d.x<0?1:2):(d.y<0?3:0);
+    }
+
+    // Déplacement autonome des habitants avec destinations aléatoires bornées.
+    const chooseGoal=(agent)=>{
+      const z=agent.zone;
+      for(let attempt=0;attempt<24;attempt++){
+        const x=Phaser.Math.Between(z.left,z.right);
+        const y=Phaser.Math.Between(z.top,z.bottom);
+        // On évite le bassin central, les façades et les zones hors des allées.
+        const inFountain=Phaser.Math.Distance.Between(x,y,24*TILE+16,18*TILE+16)<100;
+        if(!inFountain){agent.goal={x,y};agent.next=time+Phaser.Math.Between(500,1300);agent.stuck=0;return;}
+      }
+      agent.goal={x:agent.sprite.x+Phaser.Math.Between(-55,55),y:agent.sprite.y+Phaser.Math.Between(-45,45)};
+      agent.next=time+700;
+    };
+    if(!inside){
+      roamers.forEach(agent=>{
+        const a=agent.sprite;
+        if(!a.active||!a.body)return;
+        if(!agent.goal||time>=agent.next)chooseGoal(agent);
+        const dx=agent.goal.x-a.x,dy=agent.goal.y-a.y;
+        const distance=Math.hypot(dx,dy);
+        if(distance<9){
+          a.body.setVelocity(0,0);agent.goal=null;agent.next=time+agent.pause+Phaser.Math.Between(0,1000);
+        }else{
+          const speed=agent.speed;
+          a.body.setVelocity(dx/distance*speed,dy/distance*speed);
+          agent.row=Math.abs(dx)>Math.abs(dy)?(dx<0?1:2):(dy<0?3:0);
+          const frame=Math.floor(time/260)%3;
+          a.setFrame(agent.row*3+frame);
+        }
+        if(time-agent.lastCheck>500||agent.lastCheck===undefined){
+          const moved=Phaser.Math.Distance.Between(a.x,a.y,agent.lastX,agent.lastY);
+          agent.stuck=moved<2?agent.stuck+1:0;
+          agent.lastX=a.x;agent.lastY=a.y;agent.lastCheck=time;
+          if(agent.stuck>=2){a.body.setVelocity(0,0);agent.goal=null;agent.next=time+100;agent.stuck=0;}
+        }
+      });
+    }else{
+      roamers.forEach(agent=>agent.sprite.body?.setVelocity(0,0));
     }
 
     const actors=[p,...Object.values(this.npcs)];
