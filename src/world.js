@@ -264,13 +264,13 @@ export function createWorld() {
   const game=new Phaser.Game({
     type:Phaser.CANVAS,
     parent:"world3d",
-    width:parent?.clientWidth||window.innerWidth,
-    height:parent?.clientHeight||window.innerHeight,
+    width:1536,
+    height:900,
     backgroundColor:"#477d43",
     pixelArt:false,
     antialias:true,
     roundPixels:false,
-    scale:{mode:Phaser.Scale.RESIZE,autoCenter:Phaser.Scale.CENTER_BOTH},
+    scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
       preload:function loadArtwork(){
