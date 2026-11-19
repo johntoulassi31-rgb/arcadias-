@@ -427,7 +427,7 @@ export function createWorld() {
       prop.fillStyle(0x4c4031,1);prop.fillRect(px-2,py-25,4,27);
       prop.fillStyle(0x2e2c29,1);prop.fillRect(px-8,py-29,16,4);
       prop.fillStyle(0xf7d98b,1);prop.fillRect(px-5,py-25,10,9);
-      prop.fillStyle="rgba(255,209,112,0.16)";prop.fillCircle(px,py-20,16);
+      prop.fillStyle(0xffd170,0.16);prop.fillCircle(px,py-20,16);
     }
     // Benches along the paved square.
     for(const [x,y] of [[20,14],[28,22]]){
