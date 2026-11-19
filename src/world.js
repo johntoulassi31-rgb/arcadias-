@@ -166,85 +166,52 @@ function makeTreeTexture(scene, key, autumn = false) {
   return texture;
 }
 
-function makeCharacterTexture(scene, key, tunic, hair, accent, cloak = false) {
-  // Sprite sheet 32x40: silhouette plus lisible, ombrage en aplats et équipement distinctif.
-  const fw=32,fh=40,cols=3,rows=4;
+function makeCharacterTexture(scene,key,tunic,hair,accent,cloak=false) {
+  // Personnages anime : grands yeux expressifs, mèches en volume et vêtements ombrés.
+  const fw=48,fh=64,cols=3,rows=4;
   const texture=scene.textures.createCanvas(key,fw*cols,fh*rows);
-  const ctx=texture.getContext();
-  ctx.imageSmoothingEnabled=false;
-
-  for(let row=0;row<rows;row++){
-    for(let frame=0;frame<cols;frame++){
-      const ox=frame*fw,oy=row*fh;
-      const step=frame===0?-1:frame===2?1:0;
-      const rect=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(ox+x,oy+y,w,h);};
-      // Grounded shadow baked into each frame.
-      ctx.fillStyle="rgba(10,15,13,.35)";
-      ctx.beginPath();ctx.ellipse(ox+16,oy+36,10,3,0,0,Math.PI*2);ctx.fill();
-
-      // Boots, trousers and tunic silhouette.
-      rect(8+step,32,7,5,"#292a2c");rect(18-step,32,7,5,"#292a2c");
-      rect(9+step,32,4,2,"#a17b50");rect(19-step,32,4,2,"#a17b50");
-      rect(10+step,25,5,8,"#39404a");rect(18-step,25,5,8,"#39404a");
-      rect(7,15,18,14,cloak?"#302b49":tunic);
-      rect(5,19,4,9,cloak?"#302b49":tunic);rect(23,19,4,9,cloak?"#302b49":tunic);
-      rect(8,16,16,3,accent);
-      rect(11,19,10,8,cloak?"#493c68":tunic);
-      rect(8,27,16,3,"#392c2a");
-      rect(14,27,4,3,"#e6c77d");
-      // Cloth highlights and dark contour pixels.
-      rect(7,17,2,10,"rgba(255,255,255,.22)");
-      rect(23,17,2,10,"rgba(0,0,0,.2)");
-      rect(9,29,14,2,"rgba(12,14,18,.32)");
-
-      // Arms and hands.
-      rect(4,19,4,8,"#d8a982");rect(24,19,4,8,"#d8a982");
-      rect(4,25,4,3,"#bd8b6d");rect(24,25,4,3,"#bd8b6d");
-
-      // Neck and face.
-      rect(13,12,6,5,"#d8a982");
-      rect(10,6,12,11,"#e0b58f");
-      rect(11,7,10,8,"#efc8a0");
-      // Ears.
-      rect(8,10,3,4,"#c78e70");rect(21,10,3,4,"#c78e70");
-
-      // Hair silhouette varies by facing direction.
-      rect(9,4,14,5,hair);rect(8,6,3,8,hair);rect(21,6,3,8,hair);
-      rect(11,3,10,3,hair);
-      if(row===3){rect(9,5,14,9,hair);rect(11,12,10,3,hair);}
-      else{
-        rect(11,8,2,2,"#302a26");
-        if(row===0)rect(19,8,2,2,"#302a26");
-        rect(13,12,6,1,"#9c5f55");
-      }
-      // Individual fringe highlights.
-      rect(11,5,4,2,"rgba(255,255,255,.18)");
-      rect(18,6,3,2,"rgba(0,0,0,.18)");
-
-      // Class-specific equipment.
-      if(key==="guard"){
-        rect(26,15,3,16,"#c9d2d7");rect(25,21,5,3,"#b88a4b");
-        rect(27,14,2,3,"#f0e0ad");
-      }
-      if(key==="mage"){
-        rect(5,3,22,3,"#b9a0ed");rect(7,1,18,3,"#59447f");
-        rect(25,8,3,4,"#7bdcf1");rect(26,9,1,2,"#e8fbff");
-      }
-      if(key==="merchant"){
-        rect(5,15,22,3,"#b98642");rect(8,17,16,2,"#e7ca83");
-      }
-      if(key==="amelie"){
-        rect(10,3,12,3,"#e4bd72");rect(22,7,3,8,hair);
-      }
-      // Directional highlights.
-      if(frame===1)rect(8,17,2,9,"rgba(255,255,255,.14)");
+  const ctx=texture.getContext();ctx.imageSmoothingEnabled=true;
+  const rr=(x,y,w,h,r,color,stroke)=>{ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}};
+  for(let row=0;row<rows;row++)for(let frame=0;frame<cols;frame++){
+    const ox=frame*fw,oy=row*fh;ctx.save();ctx.translate(ox,oy);
+    const step=frame===0?-1:frame===2?1:0;
+    ctx.fillStyle="rgba(8,13,24,.28)";ctx.beginPath();ctx.ellipse(24,59,14,4,0,0,Math.PI*2);ctx.fill();
+    // legs and boots
+    rr(13+step,43,9,14,4,"#30384d");rr(26-step,43,9,14,4,"#30384d");
+    rr(11+step,54,12,6,3,"#242638");rr(25-step,54,12,6,3,"#242638");
+    // coat / tunic with anime cel-shading
+    rr(9,27,30,22,8,cloak?"#302c50":tunic,"#29243a");
+    ctx.fillStyle=accent;ctx.beginPath();ctx.moveTo(12,29);ctx.lineTo(24,37);ctx.lineTo(36,29);ctx.lineTo(32,46);ctx.lineTo(16,46);ctx.closePath();ctx.fill();
+    ctx.fillStyle="rgba(255,255,255,.25)";ctx.beginPath();ctx.moveTo(12,30);ctx.lineTo(18,31);ctx.lineTo(17,47);ctx.lineTo(11,44);ctx.fill();
+    rr(21,36,6,12,2,"#e6d3b0");rr(22,39,4,4,1,"#d7ae63");
+    // arms and hands
+    rr(5,30,7,17,4,cloak?"#383154":tunic);rr(36,30,7,17,4,cloak?"#383154":tunic);
+    rr(6,44,6,7,3,"#e6b99b");rr(36,44,6,7,3,"#e6b99b");
+    // neck and face
+    rr(19,22,10,9,3,"#e6b99b");
+    ctx.fillStyle="#e9bfa1";ctx.beginPath();ctx.ellipse(24,17,12,14,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#a96862";ctx.lineWidth=1;ctx.stroke();
+    // hair silhouette with directional fringe
+    ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(12,20);ctx.quadraticCurveTo(7,2,24,3);ctx.quadraticCurveTo(42,1,37,22);ctx.lineTo(34,28);ctx.quadraticCurveTo(31,19,29,15);ctx.quadraticCurveTo(22,24,15,17);ctx.lineTo(13,29);ctx.closePath();ctx.fill();
+    ctx.fillStyle="rgba(255,255,255,.24)";ctx.beginPath();ctx.moveTo(15,8);ctx.quadraticCurveTo(23,2,31,7);ctx.quadraticCurveTo(23,6,18,14);ctx.fill();
+    if(row===3){ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(12,12);ctx.quadraticCurveTo(7,28,13,36);ctx.lineTo(17,27);ctx.lineTo(18,15);ctx.fill();ctx.beginPath();ctx.moveTo(34,12);ctx.quadraticCurveTo(42,27,35,36);ctx.lineTo(31,26);ctx.fill();}
+    // eyes, highlights, brows and mouth
+    if(row!==3){
+      ctx.fillStyle="#382a35";ctx.fillRect(16,17,5,1.5);ctx.fillRect(27,17,5,1.5);
+      ctx.fillStyle=key==="amelie"?"#7b557d":"#416b8c";
+      ctx.beginPath();ctx.ellipse(18.5,20,2.5,3.5,0,0,Math.PI*2);ctx.ellipse(29.5,20,2.5,3.5,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(19.2,18.8,1,0,Math.PI*2);ctx.arc(30.2,18.8,1,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle="#a45f65";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(22,26);ctx.quadraticCurveTo(24,27,26,26);ctx.stroke();
     }
+    // signature accessories
+    if(key==="guard"){rr(38,26,4,24,2,"#cbd5df");rr(36,24,8,4,2,"#d4b56f");}
+    if(key==="mage"){rr(7,7,34,5,2,"#584477");rr(38,17,5,7,2,"#80dff5");}
+    if(key==="merchant"){rr(9,28,30,4,2,"#e6c17b");}
+    if(key==="amelie"){ctx.fillStyle="#f2d38b";ctx.beginPath();ctx.arc(36,26,3,0,Math.PI*2);ctx.fill();}
+    ctx.restore();
   }
-  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
-    texture.add(row*cols+col,0,col*fw,row*fh,fw,fh);
-  }
-  texture.refresh();
-  return texture;
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++)texture.add(row*cols+col,0,col*fw,row*fh,fw,fh);
+  texture.refresh();return texture;
 }
 
 export function createWorld() {
@@ -521,7 +488,7 @@ export function createWorld() {
       makeCharacterTexture(this,key,tunic,hair,accent,cloak);
       const shadow=this.add.ellipse(x*TILE+16,y*TILE+25,30,11,0x11170f,0.42).setDepth(y*TILE+18);
       const sprite=this.add.sprite(x*TILE+16,y*TILE+12,key,1)
-        .setOrigin(0.5,0.88).setScale(1.38).setDepth(y*TILE+40);
+        .setOrigin(0.5,0.88).setScale(1.12).setDepth(y*TILE+40);
       sprite.setData("shadow",shadow);
       this.physics.add.existing(sprite);
       sprite.body.setSize(15,10).setOffset(8,27).setCollideWorldBounds(true);
