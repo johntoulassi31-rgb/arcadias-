@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 
 const TILE = 32;
-const MAP_W = 80;
+const MAP_W = 160;
 const MAP_H = 60;
 const WORLD_W = MAP_W * TILE;
 const WORLD_H = MAP_H * TILE;
@@ -274,7 +274,8 @@ export function createWorld() {
     physics:{default:"arcade",arcade:{debug:false}},
     scene:{
       preload:function loadArtwork(){
-        this.load.svg("ardencourt-art","./assets/ardencourt-world.svg",{width:WORLD_W,height:WORLD_H});
+        this.load.svg("ardencourt-art","./assets/ardencourt-world.svg",{width:2560,height:1920});
+        this.load.svg("frontier-art","./assets/asterion-frontier.svg",{width:2560,height:1920});
       },
       create:function initializeScene(){
         try{create.call(this);}
@@ -300,6 +301,9 @@ export function createWorld() {
     const artwork=scene.add.image(0,0,"ardencourt-art")
       .setOrigin(0,0).setDisplaySize(WORLD_W,WORLD_H).setDepth(-20);
     artwork.setData("region","Ardencourt");
+    const frontier=scene.add.image(2560,0,"frontier-art")
+      .setOrigin(0,0).setDisplaySize(2560,1920).setDepth(-19);
+    frontier.setData("region","Frontières d’Asterion");
   }
 
   function addFountain(scene) {
@@ -478,6 +482,14 @@ export function createWorld() {
     addObstacle(840,150,470,210);
     addObstacle(275,560,340,210);
     addObstacle(1485,575,340,220);
+    // Arbres, colonnes en ruine et eau du Lac d’Azur dans les nouvelles régions.
+    const frontierX=2560;
+    [[130,120],[410,120],[610,80],[990,80],[900,470],[250,540],[690,560],
+     [160,1160],[420,1390],[790,1150],[1120,1450],[1500,1190],[1860,1390],
+     [2220,1150],[2430,1550]].forEach(([x,y])=>addObstacle(frontierX+x,y,58,58));
+    [[1165,350],[1390,320],[1655,340],[1870,355]].forEach(([x,y])=>addObstacle(frontierX+x,y,48,72));
+    // Le pont reste libre : seule la surface profonde du lac est bloquante.
+    addObstacle(frontierX+2090,1510,760,440);
     this.physics.add.collider(player,obstacles);
     // PNJ respectent les bâtiments, les limites et les obstacles du village.
     this.physics.add.collider(npcGroup,houseBodies);
