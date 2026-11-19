@@ -8,6 +8,18 @@ const vectors={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const keyMap={ArrowUp:"up",KeyW:"up",ArrowDown:"down",KeyS:"down",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right"};
 const status=document.querySelector("#move-state"),hint=document.querySelector("#collision-hint");
 const interactButton=document.querySelector("#interact"),dialogue=document.querySelector("#dialogue");
+const chatToggle=document.querySelector("#chat-toggle"),chatPanel=document.querySelector("#chat-panel");
+chatToggle?.addEventListener("click",()=>{
+ const open=chatPanel.classList.toggle("chat-open");
+ chatPanel.setAttribute("aria-hidden",String(!open));
+ chatToggle.setAttribute("aria-expanded",String(open));
+ chatToggle.setAttribute("aria-label",open?"Fermer la messagerie":"Ouvrir la messagerie");
+ chatToggle.classList.toggle("active",open);
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&chatPanel?.classList.contains("chat-open")){
+ chatPanel.classList.remove("chat-open");chatPanel.setAttribute("aria-hidden","true");
+ chatToggle?.setAttribute("aria-expanded","false");chatToggle?.classList.remove("active");
+}});
 const dialogueText=document.querySelector("#dialogue-text"),toast=document.querySelector("#game-toast");
 const state={hp:820,mp:220,gold:152750,quest:0,inventory:["Potion de soin × 2"],level:15,mount:null,familiar:null,combat:false};
 let activeNpc=null,dialogueStep=0,last=0,toastTimer=0,hintTimer=0;
@@ -153,4 +165,9 @@ function frame(t){
  }
  update();requestAnimationFrame(frame);
 }
+// Demander le paysage sur les navigateurs mobiles qui autorisent le verrouillage.
+const requestLandscape=()=>{
+ try{if(screen.orientation?.lock)screen.orientation.lock("landscape").catch(()=>{});}catch{}
+};
+document.querySelector("#game")?.addEventListener("pointerdown",requestLandscape,{once:true});
 load();update();requestAnimationFrame(frame);
